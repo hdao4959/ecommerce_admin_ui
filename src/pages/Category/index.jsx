@@ -10,10 +10,9 @@ const ListCategory = () => {
     const fetchData = async () => {
       try {
         const { data } = await axiosInstance.get('/categories');
-        setArrayCategory(data);
+        setArrayCategory(data.data);
       } catch (error) {
         console.log(error);
-
       }
     }
 
@@ -40,13 +39,11 @@ const ListCategory = () => {
     "/assets/js/lib/data-table/buttons.colVis.min.js",
     "/assets/js/init/datatables-init.js"
   ]
+
   ScriptLoader(arrayCss, arrayScripts)
 
   return (
     <>
-
-
-
       <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
@@ -102,7 +99,7 @@ const ListCategory = () => {
         </div>
       </div>
 
-  
+
     </>
   )
 }

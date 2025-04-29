@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AddCategory = () => {
   const navigate =  useNavigate()
-  const [childrentCategory, setChildrentCategory] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -25,7 +25,8 @@ const AddCategory = () => {
     (async () => {
       try {
         const { data } = await axiosInstance.get('/categories');
-        setChildrentCategory(data)
+        
+        setCategories(data.data)
       } catch (error) {
         console.log(error);
       }
@@ -35,8 +36,6 @@ const AddCategory = () => {
   const submitForm = async () => {
     const result = await axiosInstance.post('/categories', formData)
     navigate('/category')
-    console.log(result);
-
   }
 
   return (
@@ -88,7 +87,7 @@ const AddCategory = () => {
               <div className="col-12 col-md-9">
                 <select name="parent_id" id="select" className="form-control" value={formData.parent_id} onChange={(event) => handleChange(event)}>
                   <option value="">--Danh mục cha--</option>
-                  {childrentCategory.map((cate, index) =>
+                  {categories.map((cate, index) =>
 
                     <option  key={index} value={cate._id}>{cate.name}</option>
                   )}
