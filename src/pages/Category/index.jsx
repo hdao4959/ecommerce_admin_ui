@@ -65,6 +65,7 @@ const ListCategory = () => {
                       <th>Id</th>
                       <th>Tên</th>
 
+                      <th>Trạng thái</th>
                       <th>Options</th>
                     </tr>
                   </thead>
@@ -73,17 +74,22 @@ const ListCategory = () => {
                     {
                       arrayCategory.map((category, index) => {
                         return (
-                          <tr key={index}>
-                            <td>{category._id}</td>
-                            <td>{category.name}</td>
+                          <tr key={index} className='align-content-center'>
+                            <td className='align-content-center'>{category._id}</td>
+                            <td className='align-content-center'>{category.name}</td>
+                            <td className='text-center align-content-center'>{category.is_active ? <i className='menu-icon fa fa-check-circle text-success' /> : 
+                            <i className='menu-icon fa fa-minus-square text-danger' /> }</td>
+                            
 
-                            <td>
+                            <td className='align-content-center'>
                               <div className="d-flex justify-content-around">
                                 <a href={`/category/${category._id}`} className="btn btn-success" >
                                   Chi tiết
                                 </a>
-                                <button className='btn btn-secondary'>Sửa</button>
-                                <button className='btn btn-danger'>Xoá</button>
+                                <button className='btn btn-secondary'>
+                                  <i className='menu-icon fa fa-edit'></i>
+                                </button>
+                                <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
                               </div>
                             </td>
                           </tr>

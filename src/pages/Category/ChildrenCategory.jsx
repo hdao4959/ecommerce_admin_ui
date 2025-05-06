@@ -4,7 +4,7 @@ import axiosInstance from '../../utils/axios';
 import ScriptLoader from '../../common/ScriptLoader';
 
 const ChildrenCategory = () => {
-
+  const [category, setCategory] = useState('')
   const [arrayChildrenCategory, setArrayChildrentCategory] = useState([]);
   const {id} = useParams();
   
@@ -12,7 +12,8 @@ const ChildrenCategory = () => {
     const fetchData = async () => {
       try {
         const {data} = await axiosInstance.get('/categories/' + id);
-        setArrayChildrentCategory(data.data)
+        setArrayChildrentCategory(data.data.childrentCategory)
+        setCategory(data.data.parentCategory)
       } catch (error) {
         console.log(error);
       }
@@ -48,7 +49,7 @@ const ChildrenCategory = () => {
           <div className="card">
             <div className="card-header d-flex justify-content-between">
               <div>
-                Danh sách<strong className="card-title"> Danh mục con</strong>
+                Danh mục con của<strong className="card-title">  {category.name}</strong>
               </div>
               <a href='/category/add' className='btn btn-success'> Thêm mới</a>
 

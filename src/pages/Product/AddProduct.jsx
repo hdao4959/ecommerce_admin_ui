@@ -5,7 +5,7 @@ const AddProduct = () => {
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          Thêm mới <strong>Danh mục sản phẩm</strong>
+          Thêm mới <strong>Sản phẩm</strong>
         </div>
         <div className="card-body card-block">
           <form
