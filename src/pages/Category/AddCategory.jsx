@@ -34,8 +34,12 @@ const AddCategory = () => {
   }, [])
 
   const submitForm = async () => {
-    const result = await axiosInstance.post('/categories', formData)
-    navigate('/category')
+    try {
+      await axiosInstance.post('/categories', formData)
+      navigate('/category')
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -99,7 +103,7 @@ const AddCategory = () => {
 
             <div className="row form-group">
           <div className="col col-md-3">
-            <label className=" form-control-label">Checkboxes</label>
+            <label className=" form-control-label">Trạng thái</label>
           </div>
           <div className="col col-md-9">
             <div className="form-check">
