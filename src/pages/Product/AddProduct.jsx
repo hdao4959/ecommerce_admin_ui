@@ -7,6 +7,7 @@ const arrayCss = [
 ]
 
 const AddProduct = () => {
+  const [indexRowVariant, setIndexRowVariant]  = useState(1);
   const [category, setCategory] = useState([]);
   const [childrentCategory, setChildrentCategory] = useState([]);
   useEffect(() => {
@@ -35,15 +36,17 @@ const AddProduct = () => {
     event.preventDefault();
   }
 
-  const createElementVariant = (event) => {
+  const addNewRowVariant = (event) => {
+    setIndexRowVariant(indexRowVariant + 1);
     // event.preventDefault();
 
     const tableBodyAddVariant = document.getElementById('table_body_add_variant')
 
     const tr = document.createElement('tr');
     tr.className = 'text-center';
+    tr.setAttribute('data-index', indexRowVariant + 1)
     tr.innerHTML = `
-  <td>1</td>
+  <td>${indexRowVariant + 1}</td>
   <td>
     <input
       type="text"
@@ -61,16 +64,22 @@ const AddProduct = () => {
     </div>
   </td>
   <td>
-    <button class='btn btn-danger'><i class='menu-icon fa fa-trash-o'> </i></button>
+    <button class='delete-variant btn btn-danger'><i class='menu-icon fa fa-trash-o'> </i></button>
   </td>
 `;
 
-
+    const deleteVariant = tr.querySelector('.delete-variant');
+    deleteVariant.addEventListener('click', (event) => deleteRowVariant(event))
 
     tableBodyAddVariant.appendChild(tr);
-
   }
 
+  const deleteRowVariant = (event) => {
+    const tr = event.target.closest('tr');
+    console.log(tr.getAttribute('data-index'));
+    tr.remove()
+  }
+  
 
   const addNewRowColor = (event) => {
     console.log(event.target);
@@ -81,6 +90,9 @@ const AddProduct = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
   }
+
+  console.log(indexRowVariant);
+  
   return (
     <div className="col-12">
       <div className="card">
@@ -178,7 +190,7 @@ const AddProduct = () => {
 
             <strong>Biến thể</strong>
             <div >
-              <button className='btn btn-success my-2' onClick={(event) => createElementVariant(event)}>Thêm mới</button>
+              <button className='btn btn-success my-2' onClick={(event) => addNewRowVariant(event)}>Thêm mới</button>
             <div style={{maxHeight: "300px", overflowY: 'auto'}}>
             <table id='table_add_variant' className=' table table-striped border'  >
                 <thead>
@@ -209,7 +221,7 @@ const AddProduct = () => {
                       </div>
                     </td>
                     <td>
-                      <button className='btn btn-danger' >
+                      <button className='btn btn-danger' disabled>
                         <i className='menu-icon fa fa-trash-o' ></i>
                       </button>
                     </td>

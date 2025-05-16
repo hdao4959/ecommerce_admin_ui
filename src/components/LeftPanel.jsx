@@ -62,6 +62,31 @@ const LeftPanel = () => {
             </ul>
           </li>
           
+          <li className="menu-item-has-children dropdown">
+            <a
+              href="#"
+              className="dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="menu-icon fa fa-folder" />
+            Màu sắc
+            </a>
+            <ul className="sub-menu children dropdown-menu">
+            
+              <li>
+                <i className="fa fa-table" />
+                <a href="/color">Danh sách</a>
+              </li>
+            
+              <li>
+                <i className="fa fa-plus" />
+                <a href="/color/add">Thêm mới</a>
+              </li>
+            </ul>
+          </li>
+          
           <li className="menu-title">UI elements</li>
           {/* /.menu-title */}
           <li className="menu-item-has-children dropdown">

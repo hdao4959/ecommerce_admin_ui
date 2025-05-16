@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 
-const ScriptLoader = (arrayCss = [], arrayScripts = []) => {
+const ScriptLoader = ({arrayCss = [], arrayScripts = []}) => {
+  
   useEffect(() => {
     const addedScript = arrayScripts.map((src) => {
       const script = document.createElement('script');
@@ -37,6 +38,7 @@ const ScriptLoader = (arrayCss = [], arrayScripts = []) => {
   }    
    
   }, [])
+  return null
 }
 
 export default ScriptLoader

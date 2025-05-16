@@ -3,6 +3,7 @@ import Layout from "../layout";
 import Dashboard from "../pages/Dashboard";
 import categoryRoutes from "./category.routes";
 import productRoutes from "./product.routes";
+import colorRoutes from "./color.routes";
 
 
 const router = createBrowserRouter([
@@ -13,7 +14,8 @@ const router = createBrowserRouter([
         index: true, element: <Dashboard/>
       }, 
       ...categoryRoutes,
-      ...productRoutes
+      ...productRoutes,
+      ...colorRoutes
     ]
   }
 ])
