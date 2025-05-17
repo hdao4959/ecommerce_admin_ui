@@ -5,14 +5,14 @@ import ScriptLoader from '../../common/ScriptLoader';
 
 const ChildrenCategory = () => {
   const [category, setCategory] = useState('')
-  const [arrayChildrenCategory, setArrayChildrentCategory] = useState([]);
+  const [arrayChildrenCategory, setArrayChildrenCategory] = useState([]);
   const {id} = useParams();
   
   useEffect(() =>{
     const fetchData = async () => {
       try {
         const {data} = await axiosInstance.get('/categories/' + id);
-        setArrayChildrentCategory(data.data.childrentCategory)
+        setArrayChildrenCategory(data.data.childrenCategory)
         setCategory(data.data.parentCategory)
       } catch (error) {
         console.log(error);
@@ -25,7 +25,7 @@ const ChildrenCategory = () => {
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
-    'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
+    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",

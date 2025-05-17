@@ -10,6 +10,7 @@ const ListColor = () => {
     const fetchData = async () => {
       try {
         const { data } = await axiosInstance.get('/colors');
+        console.log(data);
         
         setArrayColor(data.data);
       } catch (error) {
@@ -38,7 +39,7 @@ const ListColor = () => {
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
-    'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
+    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",

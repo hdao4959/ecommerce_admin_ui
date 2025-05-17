@@ -4,18 +4,19 @@ import axiosInstance from '../../utils/axios';
 
 const ListProduct = () => {
   const [products, setProducts] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
       const { data } = await axiosInstance.get('/products');
       setProducts(data.data);
+      setLoading(false);
     })()
   }, [])
   console.log(products);
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
-    'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
+    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",
@@ -30,19 +31,23 @@ const ListProduct = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
-  ScriptLoader(arrayCss, arrayScripts)
+  // ScriptLoader(arrayCss, arrayScripts)
 
   return (
     <>
 
-
+      {!loading && (
+        <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
+      )}
 
       <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
             <div className="card">
-              <div className="card-header">
-                Danh sách<strong className="card-title"> Sản phẩm</strong>
+              <div className="card-header d-flex justify-content-between">
+                <strong className="card-title">Danh sách Sản phẩm</strong>
+                <a href='/product/add' className='btn btn-success'> Thêm mới</a>
+
               </div>
               <div className="card-body">
                 <table
@@ -59,27 +64,38 @@ const ListProduct = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((product, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>{product._id}</td>
-                          <td>{product.name}</td>
-                          <td>{product.status}</td>
-                          <td className='align-content-center'>
-                            <div className="d-flex justify-content-around">
-                              <a href={`/product/${product._id}`} className="btn btn-success" >
-                                Chi tiết
-                              </a>
-                              <button className='btn btn-secondary'>
-                                <i className='menu-icon fa fa-edit'></i>
-                              </button>
-                              <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
-                            </div>
-                          </td>
-                          {/* <td><button className='btn btn-success'>Chi tiết</button></td> */}
-                        </tr>
-                      )
-                    })}
+                    {loading ? (
+                      <tr>
+                        <td colSpan="4" className="text-center">
+                          <i className="fa fa-spinner fa-spin fa-2x text-primary"></i>
+                          <p>Đang tải dữ liệu...</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      <>
+                        {products.map((product, index) => (
+                          <tr key={index}>
+                            <td>{product._id}</td>
+                            <td>{product.name}</td>
+                            <td>{product.status}</td>
+                            <td className='align-content-center'>
+                              <div className="d-flex justify-content-around">
+                                <a href={`/product/${product._id}`} className="btn btn-success" >
+                                  Chi tiết
+                                </a>
+                                <button className='btn btn-secondary'>
+                                  <i className='menu-icon fa fa-edit'></i>
+                                </button>
+                                <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
+                              </div>
+                            </td>
+                            {/* <td><button className='btn btn-success'>Chi tiết</button></td> */}
+                          </tr>
+                        )
+                        )}
+                      </>
+                    )}
+
 
                   </tbody>
                 </table>
