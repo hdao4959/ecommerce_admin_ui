@@ -12,7 +12,6 @@ const ListProduct = () => {
       setLoading(false);
     })()
   }, [])
-  console.log(products);
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",

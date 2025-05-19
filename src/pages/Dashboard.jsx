@@ -32,7 +32,7 @@ const Dashboard = () => {
     "/src/common/DataCharts.js"     
   ]
 
-  ScriptLoader(arrayCss, arrayScripts);
+  ScriptLoader({arrayCss, arrayScripts});
 
  
   return (

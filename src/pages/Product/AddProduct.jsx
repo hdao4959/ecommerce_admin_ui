@@ -1,26 +1,55 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 
 const AddProduct = () => {
-  const [indexRowVariant, setIndexRowVariant] = useState(1);
+
+  const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const [childrenCategory, setChildrenCategory] = useState([]);
   const [colorsActive, setColorsActive] = useState([]);
 
   const [formData, setFormData] = useState({
-    name_product: '',
-    category: '',
-    child_category: '',
-    is_active: false
+    name: '',
+    category_id: '',
+    child_category_id: '',
+    is_active: false,
+    variants: [
+      {
+        name_variant: '',
+        colors: []
+      }
+    ]
   });
 
-  const handleChange = (event) => {
+  const handleChangeProduct = (event) => {
     const { name, type, checked, value } = event.target;
-
     setFormData(prev => ({ ...prev, [name]: type == 'checkbox' ? checked : value }))
   }
+
+  const handleChangeVariant = (index, event) => {
+    // xử lí selected cho color 
+    let selectedColors = []
+    if (event.target.selectedOptions) {
+      selectedColors = Array.from(event.target.selectedOptions).map(opt => opt.value);
+    }
+
+    const { name, value } = event.target;
+    const updateVariants = [...formData?.variants];
+    updateVariants[index] = {
+      ...updateVariants[index], [name]: value,
+      colors: selectedColors
+
+    }
+    setFormData(prev => ({
+      ...prev, variants: updateVariants,
+    }))
+
+  }
+
+
   useEffect(() => {
     (async () => {
       try {
@@ -39,7 +68,7 @@ const AddProduct = () => {
     try {
       if (!event.target.value) {
         setChildrenCategory([])
-        setFormData(prev => ({ ...prev, child_category: '' }));
+        setFormData(prev => ({ ...prev, child_category_id: '' }));
       } else {
         const { data } = await axiosInstance.get('/categories/' + event.target.value + '/children')
         setChildrenCategory(data.data.childrenCategory)
@@ -50,62 +79,44 @@ const AddProduct = () => {
     event.preventDefault();
   }
 
-  const addNewRowVariant = (event) => {
+  const addNewRowVariant = () => {
+    setFormData(prev => ({
+      ...prev,
+      variants: [
+        ...prev.variants, { name_variant: '', colors: [] }
+      ]
+    }))
+  }
+
+  // Xoá row variant
+  const deleteRowVariant = (index, event) => {
     event.preventDefault();
-    setIndexRowVariant(indexRowVariant + 1);
+    setFormData(prev => ({
+      ...prev, variants: [
+        ...prev.variants.filter((_, i) => i !== index)
+      ]
+    }))
 
-    const tableBodyAddVariant = document.getElementById('table_body_add_variant')
-
-    const tr = document.createElement('tr');
-    tr.className = 'text-center';
-    tr.setAttribute('data-index', indexRowVariant + 1)
-    tr.innerHTML = `
-  <td>${indexRowVariant + 1}</td>
-  <td>
-    <input
-      type="text"
-      name="text-input"
-      placeholder="Tên biến thể"
-      class="form-control"
-    />
-  </td>
-  <td>
-     <select name="colors" id="" multiple>
-                          ${colorsActive.map((color, index) => (
-                            `<option key=${index} value=${color._id}>${color.name}</option>`
-                          ))}
-                        </select>
-  <td>
-    <div class="col-12">
-      <select name="select" class="form-control-sm w-100">
-        <option value="">--Trạng thái--</option>
-      </select>
-    </div>
-  </td>
-  <td>
-    <button class='delete-variant btn btn-danger'><i class='menu-icon fa fa-trash-o'> </i></button>
-  </td>
-`;
-
-    const deleteVariant = tr.querySelector('.delete-variant');
-    deleteVariant.addEventListener('click', (event) => deleteRowVariant(event))
-
-    tableBodyAddVariant.appendChild(tr);
-  }
-
-  const deleteRowVariant = (event) => {
-    const tr = event.target.closest('tr');
-    tr.remove()
   }
 
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    const payloadData = formData
+    payloadData.category_id = formData.child_category_id != '' ? formData.child_category_id : formData.category_id
+    // Xoá trường child_category_id trong payload
+    delete payloadData.child_category_id;
 
-    console.log(formData);
+    try {
+      const {data} = await axiosInstance.post('/products', formData);
+      alert(data.message);
+      navigate('/product')
+    } catch (error) {
+      console.log(error);
+      
+    }
 
   }
-
 
   return (
     <div className="col-12">
@@ -130,9 +141,9 @@ const AddProduct = () => {
                 <input
                   type="text"
                   id="text-input"
-                  name="name_product"
-                  value={formData.name_product}
-                  onChange={(event) => handleChange(event)}
+                  name="name"
+                  value={formData.name}
+                  onChange={(event) => handleChangeProduct(event)}
                   placeholder="Tên sản phẩm"
                   className="form-control"
                 />
@@ -148,7 +159,7 @@ const AddProduct = () => {
                 </label>
               </div>
               <div className="col-12 col-md-9">
-                <select name="category" id="select" className="form-control" onChange={(event) => { selectedParentCategory(event); handleChange(event) }} >
+                <select name="category_id" id="select" className="form-control" onChange={(event) => { selectedParentCategory(event); handleChangeProduct(event) }} >
                   <option value="">--Danh mục cha--</option>
                   {category?.map((cate, index) => (
                     <option key={index} value={cate._id}>{cate.name}</option>
@@ -166,8 +177,8 @@ const AddProduct = () => {
               </div>
               <div className="col-12 col-md-9">
                 <select
-                  name="child_category"
-                  onChange={(event) => handleChange(event)}
+                  name="child_category_id"
+                  onChange={(event) => handleChangeProduct(event)}
                   id="selectSm"
                   className="form-control-sm form-control"
                   disabled={!childrenCategory || childrenCategory.length == 0}
@@ -195,7 +206,7 @@ const AddProduct = () => {
                         name="is_active"
                         value={formData.is_active}
                         checked={formData.is_active == true}
-                        onChange={(event) => handleChange(event)}
+                        onChange={(event) => handleChangeProduct(event)}
                         className="form-check-input"
                       />
                       Active
@@ -208,49 +219,47 @@ const AddProduct = () => {
 
             <strong>Biến thể</strong>
             <div>
-              <button type='button' className='btn btn-success my-2' onClick={(event) => addNewRowVariant(event)}>Thêm mới</button>
+              <button type='button' className='btn btn-success my-2' onClick={() => addNewRowVariant()}>Thêm biến thể</button>
               <div style={{ maxHeight: "300px", overflowY: 'auto' }}>
                 <table id='table_add_variant' className=' table table-striped border'  >
                   <thead>
-                    <tr className='text-center'>
+                    <tr className='text-center' >
                       <th>#</th>
                       <th>Tên biến thể</th>
                       <th>Màu sắc</th>
-                      <th>Trạng thái</th>
                       <th>...</th>
                     </tr>
                   </thead>
                   <tbody id='table_body_add_variant' >
-                    <tr className='text-center'>
-                      <td>1</td>
-                      <td><input
-                        type="text"
-                        id="text-input"
-                        name="text-input"
-                        placeholder="Tên biến thể"
-                        className="form-control"
-                      /></td>
-                      <td>
-                        <select name="colors" id="" multiple>
-                          {colorsActive.map((color, index) => (
-                            <option key={index} value={color._id}>{color.name}</option>
-                          ))}
-                        </select>
-                        {/* <button className='btn btn-primary' data-toggle="modal" data-target="#largeModal">Thêm màu sắc</button> */}
-                        </td>
-                      <td>
-                        <div className="col-12">
-                          <select name="select" id="select" className="form-control-sm w-100" >
-                            <option value="">--Trạng thái--</option>
+                    {formData?.variants?.map((variant, index) => (
+                      <tr key={index} className='text-center' >
+                        <th>{index}</th>
+                        <td><input
+                          type="text"
+                          id=""
+                          name="name_variant"
+                          placeholder="Tên biến thể"
+                          value={variant?.name_variant}
+                          onChange={(event) => handleChangeVariant(index, event)}
+                          className="form-control"
+                        /></td>
+                        <td>
+                          <select name="colors" id="" value={formData?.variants?.[index].colors}
+                            onChange={(event) => handleChangeVariant(index, event)}
+                            multiple>
+                            {colorsActive.map((color, index) => (
+                              <option key={index} value={color._id}>{color.name}</option>
+                            ))}
                           </select>
-                        </div>
-                      </td>
-                      <td>
-                        <button className='btn btn-danger' disabled>
-                          <i className='menu-icon fa fa-trash-o' ></i>
-                        </button>
-                      </td>
-                    </tr>
+                        </td>
+
+                        <td>
+                          <button onClick={(event) => deleteRowVariant(index, event)} className='btn btn-danger' disabled={index == 0}>
+                            <i className='menu-icon fa fa-trash-o' ></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -259,7 +268,7 @@ const AddProduct = () => {
           </form>
         </div>
 
-       
+
 
 
         <div className="card-footer">

@@ -7,38 +7,28 @@ const DetailProduct = () => {
   const { id } = useParams();
 
   const [product, setProduct] = useState({});
-  // const [variantIds, setVariantIds] = useState([]);
-  const [variantMap, setVariantMap] = useState([]);
+  const [variants, setVariants] = useState([]);
   const [colors, setColors] = useState([]);
-  
+
+
+
   useEffect(() => {
     (async () => {
       try {
-        
         const { data } = await axiosInstance('/products/' + id);
         const productData = data.data
         setProduct(productData);
-        // setVariantIds(productData?.variants?.map(variant => variant._id));
-        setColors(productData?.variants?.flatMap(variant => variant?.colors.map(color => color)));
-        // const variantIds = productData?.variants?.map(variant => variant._id);
-
-          const variantMap = productData?.variants?.reduce((map, variant) => {
-            if(!map[variant._id]) map[variant._id] = {}
-            map[variant._id] = variant
-            return map
-          }, {})
-          setVariantMap(variantMap)
-
-          
-        
+        setVariants(data.data.variants);
+        setColors(data.data.variants.flatMap(variant =>
+          variant.colors.map(color =>
+            ({ ...color, name_variant: variant.name_variant }))));
       } catch (error) {
         console.log(error);
       }
     })()
   }, [])
 
-  console.log(variantMap);
-  
+
   return (
     <div className='row'>
 
@@ -71,7 +61,6 @@ const DetailProduct = () => {
                     value={product?._id}
                     disabled
                   />
-                  {/* <small className="form-text text-muted">This is a help text</small> */}
                 </div>
 
               </div>
@@ -91,7 +80,6 @@ const DetailProduct = () => {
                     value={product?.name}
                     disabled
                   />
-                  {/* <small className="form-text text-muted">This is a help text</small> */}
                 </div>
 
               </div>
@@ -111,7 +99,6 @@ const DetailProduct = () => {
                     value={(product?.category?.parent?.name ? product?.category?.parent?.name + " / " : "") + product?.category?.name}
                     disabled
                   />
-                  {/* <small className="form-text text-muted">This is a help text</small> */}
                 </div>
 
               </div>
@@ -131,7 +118,6 @@ const DetailProduct = () => {
                     value={product?.status}
                     disabled
                   />
-                  {/* <small className="form-text text-muted">This is a help text</small> */}
                 </div>
 
               </div>
@@ -151,13 +137,12 @@ const DetailProduct = () => {
                     value={convertTimestamp(product?.created_at)}
                     disabled
                   />
-                  {/* <small className="form-text text-muted">This is a help text</small> */}
                 </div>
 
               </div>
             </form>
           </div>
-          
+
         </div>
       </div>
       <div className='col-7'  >
@@ -177,23 +162,23 @@ const DetailProduct = () => {
                 </tr>
               </thead>
               <tbody >
-               
+
                 {colors?.map((color, index) => (
                   <tr key={index} className='text-center'>
-                    <td className='text-success'><strong>{variantMap[color?.variant_id]?.name}</strong></td>
+                    <td className='text-success'><strong>{color?.name_variant}</strong></td>
                     <td><strong>{color?.name}</strong></td>
                     <td>{color?.price}</td>
                     <td>{color?.stock}</td>
-                    <td>{color?.status}</td>
+                    <td>{color?.is_active ? <strong className='text-primary'>Active</strong> : <strong className='text-danger'>Not Active</strong>}</td>
                   </tr>
                 ))}
-              
+
 
               </tbody>
             </table>
-          
+
           </div>
-         
+
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 
 const ScriptLoader = ({arrayCss = [], arrayScripts = []}) => {
-  console.log(arrayScripts);
   
   useEffect(() => {
     const addedScript = arrayScripts.map((src) => {
