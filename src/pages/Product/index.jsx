@@ -58,7 +58,7 @@ const ListProduct = () => {
                     <tr>
                       <th>Id</th>
                       <th>Tên sản phẩm</th>
-                      <th>Trạng thái</th>
+                      <th>Active</th>
                       <th>Tuỳ chọn</th>
                     </tr>
                   </thead>
@@ -76,15 +76,15 @@ const ListProduct = () => {
                           <tr key={index}>
                             <td>{product._id}</td>
                             <td>{product.name}</td>
-                            <td>{product.status}</td>
+                            <td>{product.is_active ? 'true' : 'false'}</td>
                             <td className='align-content-center'>
                               <div className="d-flex justify-content-around">
                                 <a href={`/product/${product._id}`} className="btn btn-success" >
                                   Chi tiết
                                 </a>
-                                <button className='btn btn-secondary'>
+                                <a href={`/product/${product._id}/edit`} className='btn btn-secondary'>
                                   <i className='menu-icon fa fa-edit'></i>
-                                </button>
+                                </a>
                                 <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
                               </div>
                             </td>

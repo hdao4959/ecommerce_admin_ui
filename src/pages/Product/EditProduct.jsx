@@ -82,9 +82,9 @@ const EditProduct = () => {
   }
 
   const handleChangeColor = (index, variantId, event) => {
-    const {type, name, value } = event.target
+    const { type, name, value, files } = event.target
+    const file = files?.[0]
     
-    const file = event?.target?.files?.[0]
     let imgPreview = null
     if (file) {
       imgPreview = URL.createObjectURL(file);
@@ -117,8 +117,7 @@ const EditProduct = () => {
 
       return { ...prev, colors: newColors }
     })
-    console.log(openVariant);
-
+    URL.revokeObjectURL(imgPreview)
   }
 
   const openColorModal = (variantId) => {
@@ -127,13 +126,48 @@ const EditProduct = () => {
     setOpenVariant(variant);
     modalColor.show()
   }
+  
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData);
+    try {
+      const formProduct = {
+        name: formData.name,
+        is_active: formData.is_active, 
+        category_id: formData.category_id
+      }
 
+
+      const formVariants = new FormData()
+
+  
+
+      formData.variants.forEach((variant, variantId) => {
+        formVariants.append(`variants[${variantId}][name_variant]`, variant.name_variant);
+
+        variant.colors.forEach((color, colorId) => {
+          // formVariants.append(`variants[${variantId}][colors][${colorId}][id]`, color._id)
+          // formVariants.append(`variants[${variantId}][colors][${colorId}][name]`, color.name)
+          // formVariants.append(`variants[${variantId}][colors][${colorId}][price]`, color.price)
+          // formVariants.append(`variants[${variantId}][colors][${colorId}][stock]`, color.stock)
+          formVariants.append(`variants[${variantId}][colors][${colorId}][img]`, color.img ? color.img : null)
+        })
+      })
+
+      
+      const {data} = await axiosInstance.put('/products/' + id + '/updateVariants', formVariants, {
+        headers: {
+          "Content-Type": 'multipart/form-data'
+        }
+      });
+      console.log(data);
+      
+    } catch (error) {
+      alert(error.response);
+    }
   }
 
+      console.log(formData);
 
   return (
     <div className="col-12">
@@ -280,8 +314,8 @@ const EditProduct = () => {
               </div>
             </div>
 
-          </form>
 
+          
           <div className="modal fade" id="modal_color" tabIndex="-1"
           // aria-labelledby="myModalLabel" aria-hidden="true"
           >
@@ -313,7 +347,7 @@ const EditProduct = () => {
                           <td><input name='price' onChange={(event) => handleChangeColor(index, openVariant?._id, event)} type="number" value={color.price} className='form-control' /></td>
                           <td><input name='stock' onChange={(event) => handleChangeColor(index, openVariant?._id, event)} type="number" value={color.stock} className='form-control' /></td>
                           <td><input name='img' type="file" className='form-control-file' onChange={(event) => handleChangeColor(index, openVariant?._id, event)} /></td>
-                          <td><img src={color?.img_preview} style={{width: '100px'}} alt="" /></td>
+                          <td><img src={color?.img_preview} style={{ width: '100px' }} alt="" /></td>
                           <td><button className='btn btn-danger'>Xoá</button></td>
                         </tr>
                       ))}
@@ -329,6 +363,8 @@ const EditProduct = () => {
               </div>
             </div>
           </div>
+
+          </form>
         </div>
 
 

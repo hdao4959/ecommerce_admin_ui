@@ -46,7 +46,7 @@ const LeftPanel = () => {
               aria-expanded="false"
             >
               <i className="menu-icon fa fa-folder" />
-              Sản phẩm
+              Dòng sản phẩm
             </a>
             <ul className="sub-menu children dropdown-menu">
             
@@ -58,6 +58,30 @@ const LeftPanel = () => {
               <li>
                 <i className="fa fa-plus" />
                 <a href="/product/add">Thêm mới</a>
+              </li>
+            </ul>
+          </li>
+          <li className="menu-item-has-children dropdown">
+            <a
+              href="#"
+              className="dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="menu-icon fa fa-folder" />
+              Biến thể dòng sản phẩm
+            </a>
+            <ul className="sub-menu children dropdown-menu">
+            
+              <li>
+                <i className="fa fa-table" />
+                <a href="/product">Danh sách</a>
+              </li>
+            
+              <li>
+                <i className="fa fa-plus" />
+                <a href="/variant/add">Thêm mới</a>
               </li>
             </ul>
           </li>

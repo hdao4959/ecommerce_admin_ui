@@ -9,19 +9,13 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const [childrenCategory, setChildrenCategory] = useState([]);
-  const [colorsActive, setColorsActive] = useState([]);
+  // const [colorsActive, setColorsActive] = useState([]);
 
   const [formData, setFormData] = useState({
     name: '',
     category_id: '',
     child_category_id: '',
     is_active: false,
-    variants: [
-      {
-        name_variant: '',
-        colors: []
-      }
-    ]
   });
 
   const handleChangeProduct = (event) => {
@@ -29,25 +23,25 @@ const AddProduct = () => {
     setFormData(prev => ({ ...prev, [name]: type == 'checkbox' ? checked : value }))
   }
 
-  const handleChangeVariant = (index, event) => {
-    // xử lí selected cho color 
-    let selectedColors = []
-    if (event.target.selectedOptions) {
-      selectedColors = Array.from(event.target.selectedOptions).map(opt => opt.value);
-    }
+  // const handleChangeVariant = (index, event) => {
+  //   // xử lí selected cho color 
+  //   let selectedColors = []
+  //   if (event.target.selectedOptions) {
+  //     selectedColors = Array.from(event.target.selectedOptions).map(opt => opt.value);
+  //   }
 
-    const { name, value } = event.target;
-    const updateVariants = [...formData?.variants];
-    updateVariants[index] = {
-      ...updateVariants[index], [name]: value,
-      colors: selectedColors
+  //   const { name, value } = event.target;
+  //   const updateVariants = [...formData?.variants];
+  //   updateVariants[index] = {
+  //     ...updateVariants[index], [name]: value,
+  //     colors: selectedColors
 
-    }
-    setFormData(prev => ({
-      ...prev, variants: updateVariants,
-    }))
+  //   }
+  //   setFormData(prev => ({
+  //     ...prev, variants: updateVariants,
+  //   }))
 
-  }
+  // }
 
 
   useEffect(() => {
@@ -59,18 +53,22 @@ const AddProduct = () => {
         setColorsActive(colors.data.data)
       } catch (error) {
         console.log(error);
-
       }
     })()
   }, [])
 
   const selectedParentCategory = async (event) => {
+    const idParentCategory = event.target.value
+
     try {
-      if (!event.target.value) {
+      if (!idParentCategory) {
+        // Reset danh sách danh mục con khi danh mục cha chưa chọn
         setChildrenCategory([])
+        // Reset selected danh mục con khi thay đổi select danh mục cha
+
         setFormData(prev => ({ ...prev, child_category_id: '' }));
       } else {
-        const { data } = await axiosInstance.get('/categories/' + event.target.value + '/children')
+        const { data } = await axiosInstance.get('/categories/' + idParentCategory + '/children')
         setChildrenCategory(data.data.childrenCategory)
       }
     } catch (error) {
@@ -79,41 +77,35 @@ const AddProduct = () => {
     event.preventDefault();
   }
 
-  const addNewRowVariant = () => {
-    setFormData(prev => ({
-      ...prev,
-      variants: [
-        ...prev.variants, { name_variant: '', colors: [] }
-      ]
-    }))
-  }
+  // const addNewRowVariant = () => {
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     variants: [
+  //       ...prev.variants, { name_variant: '', colors: [] }
+  //     ]
+  //   }))
+  // }
 
-  // Xoá row variant
-  const deleteRowVariant = (index, event) => {
-    event.preventDefault();
-    setFormData(prev => ({
-      ...prev, variants: [
-        ...prev.variants.filter((_, i) => i !== index)
-      ]
-    }))
+  // // Xoá row variant
+  // const deleteRowVariant = (index, event) => {
+  //   event.preventDefault();
+  //   setFormData(prev => ({
+  //     ...prev, variants: [
+  //       ...prev.variants.filter((_, i) => i !== index)
+  //     ]
+  //   }))
 
-  }
+  // }
 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const payloadData = formData
-    payloadData.category_id = formData.child_category_id != '' ? formData.child_category_id : formData.category_id
-    // Xoá trường child_category_id trong payload
-    delete payloadData.child_category_id;
-
     try {
-      const {data} = await axiosInstance.post('/products', formData);
+      const { data } = await axiosInstance.post('/products', formData);
       alert(data.message);
       navigate('/product')
     } catch (error) {
       console.log(error);
-      
     }
 
   }
@@ -134,7 +126,7 @@ const AddProduct = () => {
             <div className="row form-group">
               <div className="col col-md-3">
                 <label htmlFor="text-input" className=" form-control-label">
-                  Tên sản phẩm
+                  Tên dòng sản phẩm
                 </label>
               </div>
               <div className="col-12 col-md-9">
@@ -217,7 +209,7 @@ const AddProduct = () => {
               </div>
             </div>
 
-            <strong>Biến thể</strong>
+            {/* <strong>Biến thể</strong>
             <div>
               <button type='button' className='btn btn-success my-2' onClick={() => addNewRowVariant()}>Thêm biến thể</button>
               <div style={{ maxHeight: "300px", overflowY: 'auto' }}>
@@ -263,7 +255,7 @@ const AddProduct = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div> */}
 
           </form>
         </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axios';
 import { useParams } from 'react-router-dom';
 import convertTimestamp from '../../utils/convertTimestamp';
-
+import formatPrice from '../../utils/formatPrice.js';
 const DetailProduct = () => {
   const { id } = useParams();
 
@@ -158,6 +158,7 @@ const DetailProduct = () => {
                   <th>Màu sắc</th>
                   <th>Giá</th>
                   <th>Số lượng</th>
+                  <th>Hình ảnh</th>
                   <th>Trạng thái</th>
                 </tr>
               </thead>
@@ -167,8 +168,9 @@ const DetailProduct = () => {
                   <tr key={index} className='text-center'>
                     <td className='text-success'><strong>{color?.name_variant}</strong></td>
                     <td><strong>{color?.name}</strong></td>
-                    <td>{color?.price}</td>
+                    <td>{formatPrice(color?.price)}</td>
                     <td>{color?.stock}</td>
+                    <td><img src={color?.img} alt="" /></td>
                     <td>{color?.is_active ? <strong className='text-primary'>Active</strong> : <strong className='text-danger'>Not Active</strong>}</td>
                   </tr>
                 ))}
