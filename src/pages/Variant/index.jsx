@@ -2,19 +2,20 @@ import React, { useEffect, useState } from 'react'
 import ScriptLoader from '../../common/ScriptLoader'
 import axiosInstance from '../../utils/axios';
 
-const ListProduct = () => {
-  const [products, setProducts] = useState([]);
+const ListVariant = () => {
+  const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
-      const { data } = await axiosInstance.get('/products');
-      setProducts(data.data.products);
+      const { data } = await axiosInstance.get('/variants');
+      setVariants(data.data.variants);
       setLoading(false);
     })()
   }, [])
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
+    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",
@@ -43,8 +44,8 @@ const ListProduct = () => {
           <div className="col-md-12">
             <div className="card">
               <div className="card-header d-flex justify-content-between">
-                <strong className="card-title">Danh sách Sản phẩm</strong>
-                <a href='/product/add' className='btn btn-success'> Thêm mới</a>
+                <strong className="card-title">Danh sách biến thể</strong>
+                <a href='/variant/add' className='btn btn-success'> Thêm mới</a>
 
               </div>
               <div className="card-body">
@@ -53,9 +54,9 @@ const ListProduct = () => {
                   className="table table-striped table-bordered"
                 >
                   <thead>
-
                     <tr>
                       <th>Id</th>
+                      <th>Tên biến thể</th>
                       <th>Tên sản phẩm</th>
                       <th>Active</th>
                       <th>Tuỳ chọn</th>
@@ -71,17 +72,18 @@ const ListProduct = () => {
                       </tr>
                     ) : (
                       <>
-                        {products.map((product, index) => (
+                        {variants.map((variant, index) => (
                           <tr key={index}>
-                            <td>{product._id}</td>
-                            <td>{product.name}</td>
-                            <td>{product.is_active ? 'true' : 'false'}</td>
+                            <td>{variant._id}</td>
+                            <td>{variant.name}</td>
+                            <td>{variant.product.name}</td>
+                            <td>{variant.is_active ? 'true' : 'false'}</td>
                             <td className='align-content-center'>
                               <div className="d-flex justify-content-around">
-                                <a href={`/product/${product._id}`} className="btn btn-success" >
+                                <a href={`/variant/${variant._id}`} className="btn btn-success" >
                                   Chi tiết
                                 </a>
-                                <a href={`/product/${product._id}/edit`} className='btn btn-secondary'>
+                                <a href={`/variant/${variant._id}/edit`} className='btn btn-secondary'>
                                   <i className='menu-icon fa fa-edit'></i>
                                 </a>
                                 <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
@@ -93,8 +95,6 @@ const ListProduct = () => {
                         )}
                       </>
                     )}
-
-
                   </tbody>
                 </table>
               </div>
@@ -106,4 +106,4 @@ const ListProduct = () => {
   )
 }
 
-export default ListProduct
+export default ListVariant

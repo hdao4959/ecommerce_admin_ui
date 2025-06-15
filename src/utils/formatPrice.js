@@ -1,5 +1,5 @@
 const formatPrice = (price) => {
-  return price.toLocaleString('vi', {style: 'currency', currency: "VND"});
+  return parseInt(price).toLocaleString('vi', {style: 'currency', currency: "VND"});
 }
 
 export default formatPrice

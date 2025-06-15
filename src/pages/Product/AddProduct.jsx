@@ -204,58 +204,11 @@ const AddProduct = () => {
                       Active
                     </label>
                   </div>
-
                 </div>
               </div>
             </div>
 
-            {/* <strong>Biến thể</strong>
-            <div>
-              <button type='button' className='btn btn-success my-2' onClick={() => addNewRowVariant()}>Thêm biến thể</button>
-              <div style={{ maxHeight: "300px", overflowY: 'auto' }}>
-                <table id='table_add_variant' className=' table table-striped border'  >
-                  <thead>
-                    <tr className='text-center' >
-                      <th>#</th>
-                      <th>Tên biến thể</th>
-                      <th>Màu sắc</th>
-                      <th>...</th>
-                    </tr>
-                  </thead>
-                  <tbody id='table_body_add_variant' >
-                    {formData?.variants?.map((variant, index) => (
-                      <tr key={index} className='text-center' >
-                        <th>{index}</th>
-                        <td><input
-                          type="text"
-                          id=""
-                          name="name_variant"
-                          placeholder="Tên biến thể"
-                          value={variant?.name_variant}
-                          onChange={(event) => handleChangeVariant(index, event)}
-                          className="form-control"
-                        /></td>
-                        <td>
-                          <select name="colors" id="" value={formData?.variants?.[index].colors}
-                            onChange={(event) => handleChangeVariant(index, event)}
-                            multiple>
-                            {colorsActive.map((color, index) => (
-                              <option key={index} value={color._id}>{color.name}</option>
-                            ))}
-                          </select>
-                        </td>
-
-                        <td>
-                          <button onClick={(event) => deleteRowVariant(index, event)} className='btn btn-danger' disabled={index == 0}>
-                            <i className='menu-icon fa fa-trash-o' ></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div> */}
+      
 
           </form>
         </div>
@@ -264,7 +217,7 @@ const AddProduct = () => {
 
 
         <div className="card-footer">
-          <button className='' type="submit" onClick={(event) => handleSubmit(event)} >
+          <button style={{cursor: 'pointer'}} type="submit" onClick={(event) => handleSubmit(event)} >
             <i className="fa fa-dot-circle-o" /> Submit
           </button>
           <button type="reset" >

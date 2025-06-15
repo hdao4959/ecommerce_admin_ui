@@ -5,6 +5,7 @@ import categoryRoutes from "./category.routes";
 import productRoutes from "./product.routes";
 import colorRoutes from "./color.routes";
 import variantRoutes from "./variant.routes";
+import orderRoutes from "./order.routes";
 
 
 const router = createBrowserRouter([
@@ -17,7 +18,8 @@ const router = createBrowserRouter([
       ...categoryRoutes,
       ...productRoutes,
       ...colorRoutes,
-      ...variantRoutes
+      ...variantRoutes,
+      ...orderRoutes
     ]
   }
 ])

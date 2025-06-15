@@ -48,12 +48,11 @@ const ListCategory = () => {
         <div className="row ">
           <div className="col-md-12">
             <div className="card">
-              <div className="card-header d-flex justify-content-between">
-                <div>
-                  Danh sách<strong className="card-title"> Danh mục sản phẩm</strong>
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <div >
+                  <strong className="card-title">Danh sách Danh mục sản phẩm</strong>
                 </div>
-                <a href='/category/add' className='btn btn-success'> Thêm mới</a>
-
+                  <a href='/category/add' className='btn btn-success'> Thêm mới</a>
               </div>
               <div className="card-body">
                 <table
@@ -77,9 +76,9 @@ const ListCategory = () => {
                           <tr key={index} className='align-content-center'>
                             <td className='align-content-center'>{category._id}</td>
                             <td className='align-content-center'>{category.name}</td>
-                            <td className='text-center align-content-center'>{category.is_active ? <i className='menu-icon fa fa-check-circle text-success' /> : 
-                            <i className='menu-icon fa fa-minus-square text-danger' /> }</td>
-                            
+                            <td className='text-center align-content-center'>{category.is_active ? <i className='menu-icon fa fa-check-circle text-success' /> :
+                              <i className='menu-icon fa fa-minus-square text-danger' />}</td>
+
 
                             <td className='align-content-center'>
                               <div className="d-flex justify-content-around">

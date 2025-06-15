@@ -70,13 +70,13 @@ const LeftPanel = () => {
               aria-expanded="false"
             >
               <i className="menu-icon fa fa-folder" />
-              Biến thể dòng sản phẩm
+              Biến thể sản phẩm
             </a>
             <ul className="sub-menu children dropdown-menu">
             
               <li>
                 <i className="fa fa-table" />
-                <a href="/product">Danh sách</a>
+                <a href="/variant">Danh sách</a>
               </li>
             
               <li>
@@ -108,6 +108,27 @@ const LeftPanel = () => {
                 <i className="fa fa-plus" />
                 <a href="/color/add">Thêm mới</a>
               </li>
+            </ul>
+          </li>
+
+          <li className="menu-item-has-children dropdown">
+            <a
+              href="#"
+              className="dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="menu-icon fa fa-folder" />
+            Đơn hàng
+            </a>
+            <ul className="sub-menu children dropdown-menu">
+            
+              <li>
+                <i className="fa fa-table" />
+                <a href="/order">Danh sách</a>
+              </li>
+
             </ul>
           </li>
           

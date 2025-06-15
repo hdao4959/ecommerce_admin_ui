@@ -10,9 +10,8 @@ const ListColor = () => {
     const fetchData = async () => {
       try {
         const { data } = await axiosInstance.get('/colors');
-        console.log(data);
         
-        setArrayColor(data.data);
+        setArrayColor(data.data.colors);
       } catch (error) {
         console.log(error);
       } finally {
@@ -24,6 +23,7 @@ const ListColor = () => {
 
   }, [])
 
+  
   const handleDeleteColor = async (id) => {
     try {
       const {data} = await axiosInstance.delete('/colors/' + id);
