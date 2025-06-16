@@ -1,7 +1,8 @@
-import env from "../../config/env"
 import formatPrice from "../../utils/formatPrice"
+import OrderProductItem from "./OrderProductItem"
 
-const OrderProductList = ({order}) => {
+const OrderProductList = ({order, key}) => {
+  
   return (
     <div className="card">
       <div className="card-header">
@@ -22,26 +23,7 @@ const OrderProductList = ({order}) => {
             <tbody className='border'>
               {
                 order?.orderItems && order.orderItems.map((item, index) => (
-                  <tr key={index}>
-                    <td className="serial">{index + 1}.</td>
-                    <td>
-                      <div className="round-img">
-                        <img
-                          src={`${env.VITE_SERVER_BASE_URL}/${item.img}`}
-                          alt={`${item?.product_name} ${item?.variant_name} ${item?.color}`}
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      <span className="name">{item?.product_name} {item?.variant_name} {item?.color}</span>{" "}
-                    </td>
-                    <td>
-                      <span className="badge badge-complete">{item?.quantity}</span>
-                    </td>
-                    <td>
-                      <span className="badge badge-pending">{formatPrice(item.price)}</span>
-                    </td>
-                  </tr>
+                  <OrderProductItem key={index} item={item} index={index}/>
                 ))
               }
             </tbody>

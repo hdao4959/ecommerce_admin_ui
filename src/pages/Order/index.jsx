@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react'
-import useOrder from '../../hooks/useOrder'
+import { useEffect } from 'react'
 import ScriptLoader from '../../common/ScriptLoader'
 import formatPrice from '../../utils/formatPrice'
 import formatTimestamp from '../../utils/formatTimestamp'
 import PAYMENT_METHODS from '../../constants/paymentMethods'
 import ORDER_METHODS from '../../constants/orderMethods'
+import useApi from '../../hooks/useApi'
+import orderService from '../../services/orderService'
 
 const ListOrder = () => {
-
-
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
   ]
@@ -25,20 +24,16 @@ const ListOrder = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
-
-  const { orders, fetchOrders, loading } = useOrder();
-
+  const { data, loading, error, fetchApi } = useApi(orderService.getAll);
   useEffect(() => {
-    fetchOrders()
+    fetchApi()
   }, [])
-  
   return (
     <>
       {
         !loading && (
           <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
         )}
-
       <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
@@ -47,12 +42,8 @@ const ListOrder = () => {
                 <strong className="card-title">Danh sách Đơn hàng</strong>
               </div>
               <div className="card-body">
-                <table
-                  id="bootstrap-data-table"
-                  className="table table-striped table-bordered"
-                >
+                <table id="bootstrap-data-table" className="table table-striped table-bordered">
                   <thead>
-
                     <tr>
                       <th>Mã đơn hàng</th>
                       <th>Tên người nhận</th>
@@ -68,14 +59,14 @@ const ListOrder = () => {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan="4" className="text-center">
+                        <td colSpan="9" className="text-center">
                           <i className="fa fa-spinner fa-spin fa-2x text-primary"></i>
                           <p>Đang tải dữ liệu...</p>
                         </td>
                       </tr>
                     ) : (
                       <>
-                        {orders && orders.map((order, index) => (
+                        {data.orders && data.orders.map((order, index) => (
                           <tr key={index}>
                             <td className='align-content-center'>{order._id}</td>
                             <td className='align-content-center'>{order.name}</td>
@@ -87,10 +78,7 @@ const ListOrder = () => {
                             <td className='align-content-center'><span className={`badge badge-${ORDER_METHODS[order?.status]?.badge_color}`}>{ORDER_METHODS[order?.status]?.name}</span></td>
                             <td className='align-content-center'>
                               <div className="d-flex justify-content-around">
-                                <a href={`/order/${order._id}`} className="btn btn-success" >
-                                  Chi tiết
-                                </a>
-                                {/* <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button> */}
+                                <a href={`/order/${order._id}`} className="btn btn-success" >Chi tiết</a>
                               </div>
                             </td>
                           </tr>

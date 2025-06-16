@@ -24,10 +24,13 @@ const useOrder = () => {
     return await orderApi.getDetailById(id);
   }
 
+  const changeStatus = async (id, status) => {
+    return await orderApi.changeStatus(id, status)
+  }
 
 
   return {
-    orders, loading, error, fetchOrders, getDetailById
+    orders, loading, error, fetchOrders, getDetailById, changeStatus
   }
 }
 
