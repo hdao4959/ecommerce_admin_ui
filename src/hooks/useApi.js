@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify";
 
 const useApi = (apiFunc, autoFetch = false, ...initialArgs) => {
   const [loading, setLoading] = useState(true);
@@ -11,8 +12,12 @@ const useApi = (apiFunc, autoFetch = false, ...initialArgs) => {
     try {
       const response = await apiFunc(...args);
       setData(response?.data?.data)
+      if(response?.data?.message){
+        toast.success(response.data.message)
+      }
     } catch (error) {
       setError(error?.response || "Có lỗi không xác định");
+      toast.error(error?.response)
       throw error
     } finally {
       setLoading(false)
@@ -24,9 +29,6 @@ const useApi = (apiFunc, autoFetch = false, ...initialArgs) => {
       fetchApi(...initialArgs);
     }
   }, [])
-
-
-
   return {
     loading, data, error, fetchApi
   }

@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import ORDER_METHODS from '../../constants/orderMethods'
 
 const OrderStatusLine = ({ currentStatus }) => {
   const statusKeys = Object.keys(ORDER_METHODS)
+
   return (
     <div className="position-relative my-4">
       {/* Line background */}
@@ -13,7 +14,7 @@ const OrderStatusLine = ({ currentStatus }) => {
       <div className="d-flex justify-content-between align-items-center" style={{ zIndex: 1, position: 'relative' }}>
         {statusKeys.map((status, index) => {
           const isActive = statusKeys.indexOf(currentStatus) >= index
-          
+
           const statusInfo = ORDER_METHODS[status]
 
           return (

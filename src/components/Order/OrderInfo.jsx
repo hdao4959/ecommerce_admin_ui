@@ -1,28 +1,53 @@
 import OrderStatusLine from './OrderStatusLine'
 import PAYMENT_METHODS from '../../constants/paymentMethods'
 import ORDER_METHODS from '../../constants/orderMethods'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useApi from '../../hooks/useApi'
 import orderService from '../../services/orderService'
+import locationService from '../../services/locationService'
+import { toast } from 'react-toastify'
+import formatTimestamp from '../../utils/formatTimestamp'
 
 const OrderInfo = ({ order, fetchOrder }) => {
-  const { fetchApi: changeStatus } = useApi(orderService.changeOrderStatus);
-  const [orderStatus, setOrderStatus] = useState(order?.status)
-
+  const [address, setAddress] = useState(null);
+  const [orderStatus, setOrderStatus] = useState("")
   const orderStatusKeys = Object.keys(ORDER_METHODS);
+
+
+  const { data: responseWards, fetchApi: fetchWards } = useApi(locationService.getWards);
+  const { fetchApi: changeStatus } = useApi(orderService.changeOrderStatus);
+
 
   const handleChangeOrderStatus = async (event) => {
     const confirmed = confirm('Bạn có chắc muốn thay đổi trạng thái đơn hàng không?')
     if (confirmed) {
       try {
-        await changeStatus(order._id, event.target.value)
+        await changeStatus(order?._id, event.target.value)
         setOrderStatus(event.target.value)
-        fetchOrder(order._id)
+        fetchOrder()
       } catch (error) {
-        alert('Thay đổi trạng thái đơn hàng thất bại')
+        toast.error(error.message);
       }
     }
   }
+
+  
+  useEffect(() => {
+    (async () => {
+      await fetchWards(order?.district)
+    })()
+  }, [])
+
+  useEffect(() => {
+    setOrderStatus(order.status || "");
+  }, [order, order?.status])
+
+  useEffect(() => {
+    if (responseWards && responseWards.wards) {
+      const ward = responseWards.wards.find(ward => ward?.code == order?.ward);
+      setAddress(ward.path_with_type)
+    }
+  }, [responseWards, order, order.ward])
 
   return (
     <div className="card">
@@ -31,6 +56,8 @@ const OrderInfo = ({ order, fetchOrder }) => {
       </div>
       <div className="card-body">
         <div className="mx-auto d-block">
+          <h5 className="text-sm-center mt-2 mb-1"><strong>Mã đơn hàng:</strong> {order?._id}</h5>
+          <h5 className="text-sm-center mt-2 mb-1"><strong>Ngày đặt hàng:</strong> {formatTimestamp(order?.created_at)}</h5>
           <h5 className="text-sm-center mt-2 mb-1"><strong>Họ và tên:</strong> {order?.name}</h5>
           <div className="location text-sm-center">
             <strong>Số điện thoại: </strong>{order?.phone_number}
@@ -39,7 +66,8 @@ const OrderInfo = ({ order, fetchOrder }) => {
             <strong>Email:</strong>{order?.email}
           </div>
           <div className="location text-sm-center">
-            <i className="fa fa-map-marker" /><strong>Địa chỉ:</strong> California, United States
+            {/* <i className="fa fa-map-marker" /> */}
+            <strong>Địa chỉ:</strong> {address}
           </div>
           <div className="location text-sm-center">
             <strong>Ghi chú:</strong> {order?.note}
@@ -62,6 +90,7 @@ const OrderInfo = ({ order, fetchOrder }) => {
             </select></strong>
           </div>
           <OrderStatusLine currentStatus={orderStatus} />
+
         </div>
       </div>
     </div>
