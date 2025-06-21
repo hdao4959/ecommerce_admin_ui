@@ -62,7 +62,7 @@ const ListColor = () => {
           <div className="col-md-12">
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
-                <strong className="card-title">Danh sách Màu sắc</strong>
+                <strong className="card-title">Danh sách <span className='text-info'>Màu sắc</span></strong>
                 <a href='/color/add' className='btn btn-success'> Thêm mới</a>
               </div>
               <div className="card-body">

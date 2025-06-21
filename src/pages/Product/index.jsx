@@ -43,7 +43,7 @@ const ListProduct = () => {
           <div className="col-md-12">
             <div className="card">
               <div className="card-header d-flex justify-content-between">
-                <strong className="card-title">Danh sách Sản phẩm</strong>
+                <strong className="card-title">Danh sách <span className='text-info'>Sản phẩm</span></strong>
                 <a href='/product/add' className='btn btn-success'> Thêm mới</a>
 
               </div>

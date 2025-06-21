@@ -39,7 +39,7 @@ const ListOrder = () => {
           <div className="col-md-12">
             <div className="card">
               <div className="card-header d-flex justify-content-between">
-                <strong className="card-title">Danh sách Đơn hàng</strong>
+                <strong className="card-title">Danh sách <span className='text-info'>Đơn hàng</span></strong>
               </div>
               <div className="card-body">
                 <table id="bootstrap-data-table" className="table table-striped table-bordered">

@@ -44,7 +44,7 @@ const ListVariant = () => {
           <div className="col-md-12">
             <div className="card">
               <div className="card-header d-flex justify-content-between">
-                <strong className="card-title">Danh sách biến thể</strong>
+                <strong className="card-title">Danh sách <span className='text-info'>Biến thể</span></strong>
                 <a href='/variant/add' className='btn btn-success'> Thêm mới</a>
 
               </div>

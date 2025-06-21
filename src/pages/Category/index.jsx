@@ -50,7 +50,7 @@ const ListCategory = () => {
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
                 <div >
-                  <strong className="card-title">Danh sách Danh mục sản phẩm</strong>
+                  <strong className="card-title">Danh sách<span className='text-info'>Danh mục sản phẩm</span></strong>
                 </div>
                   <a href='/category/add' className='btn btn-success'> Thêm mới</a>
               </div>

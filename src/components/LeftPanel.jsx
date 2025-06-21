@@ -5,14 +5,14 @@ const LeftPanel = () => {
     <nav className="navbar navbar-expand-sm navbar-default">
       <div id="main-menu" className="main-menu collapse navbar-collapse">
         <ul className="nav navbar-nav">
-          <li className="active">
+          <li title="Dashboard" className="active">
             <a href="/">
               <i className="menu-icon fa fa-laptop" />
               Dashboard{" "}
             </a>
           </li>
 
-          <li className="menu-item-has-children dropdown">
+          <li title="Danh mục sản phẩm" className="menu-item-has-children dropdown">
             <a
               href="#"
               className="dropdown-toggle"
@@ -37,7 +37,7 @@ const LeftPanel = () => {
             </ul>
           </li>
 
-          <li className="menu-item-has-children dropdown">
+          <li title="Dòng sản phẩm" className="menu-item-has-children dropdown">
             <a
               href="#"
               className="dropdown-toggle"
@@ -61,7 +61,7 @@ const LeftPanel = () => {
               </li>
             </ul>
           </li>
-          <li className="menu-item-has-children dropdown">
+          <li title="Biến thể sản phẩm" className="menu-item-has-children dropdown">
             <a
               href="#"
               className="dropdown-toggle"
@@ -86,7 +86,7 @@ const LeftPanel = () => {
             </ul>
           </li>
           
-          <li className="menu-item-has-children dropdown">
+          <li title="Màu sắc" className="menu-item-has-children dropdown">
             <a
               href="#"
               className="dropdown-toggle"
@@ -111,7 +111,7 @@ const LeftPanel = () => {
             </ul>
           </li>
 
-          <li className="menu-item-has-children dropdown">
+          <li title="Đơn hàng" className="menu-item-has-children dropdown">
             <a
               href="#"
               className="dropdown-toggle"
@@ -127,6 +127,27 @@ const LeftPanel = () => {
               <li>
                 <i className="fa fa-table" />
                 <a href="/order">Danh sách</a>
+              </li>
+
+            </ul>
+          </li>
+          
+          <li title="Tài khoản người dùng" className="menu-item-has-children dropdown">
+            <a
+              href="#"
+              className="dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="menu-icon fa fa-folder" />
+            Tài khoản người dùng
+            </a>
+            <ul className="sub-menu children dropdown-menu">
+            
+              <li>
+                <i className="fa fa-table" />
+                <a href="/user">Danh sách</a>
               </li>
 
             </ul>
