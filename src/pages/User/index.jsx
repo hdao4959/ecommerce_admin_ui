@@ -1,5 +1,5 @@
 import ScriptLoader from '../../common/ScriptLoader';
-
+import env from '../../config/env.js'
 const ListUser = () => {
 
   const arrayCss = [
@@ -19,6 +19,7 @@ const ListUser = () => {
   ]
 
   const handleLoadAll = () => {
+
     const $ = window.$;
     if ($.fn.DataTable) {
       const $table = $('#bootstrap-data-table');
@@ -29,17 +30,39 @@ const ListUser = () => {
       $table.DataTable({
         processing: true,
         serverSide: true,
+        searchDelay: 1000,
         ajax: function (data, callback) {
           const keyword = data.search.value;
-          
-          fetch(`http://localhost:3000/api/v1/admin/users?search=${keyword}`)
+          const order = data?.order[0]
+          const direction = order?.dir
+          const column = order?.column
+          const nameColumn = data?.columns[column]?.data;
+          const limit = data?.length;
+          const offset = data?.start;
+          let params = []
+
+          if (keyword) {
+            params.push(`search=${encodeURIComponent(keyword)}`)
+          }
+
+          if (direction && nameColumn) {
+            params.push(`sortBy=${nameColumn}`)
+            params.push(`orderBy=${direction}`)
+          }
+
+          params.push(`limit=${limit}`)
+          params.push(`offset=${offset}`)
+
+          const query = params.length > 0 ? `?${params.join('&')}` : "" 
+
+          fetch(`${env.VITE_ADMIN_API_URL}/users` + query)
             .then(res => res.json())
             .then(response => {
               callback({
-                draw: data.draw,
-                recordsTotal: response.total,
-                recordsFiltered: response.totalFiltered,
-                data: response.data.users
+                draw: data?.draw,
+                recordsTotal: response?.data?.meta?.total,
+                recordsFiltered: response?.data?.meta?.totalFiltered,
+                data: response?.data?.items
               })
             })
         },
@@ -47,13 +70,13 @@ const ListUser = () => {
           { data: '_id' },
           { data: 'name' },
           { data: 'email' },
-          { data: 'phone_number' }, 
+          { data: 'phone_number' },
           {
             data: null,
             render: function (data) {
               return `
-                <div class="d-flex justify-content-around">
-                  <a href="/user/${data._id}" class="btn btn-success">Chi tiết</a>
+                <div class="d-flex justify-content-around" style="gap:2px">
+                  <a href="/user/${data._id}" class="btn btn-success"><i class="menu-icon fa fa-info-circle"></i></a>
                   <button class="btn btn-secondary"><i class="menu-icon fa fa-edit"></i></button>
                   <button class="btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>
                 </div>
@@ -64,7 +87,7 @@ const ListUser = () => {
       }
       )
     } else {
-      alert('Có lỗi')
+      alert('Lỗi khi render dữ liệu')
     }
   }
   return (
