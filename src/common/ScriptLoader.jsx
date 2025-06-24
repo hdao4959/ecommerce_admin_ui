@@ -10,7 +10,6 @@ const ScriptLoader = ({ arrayCss = [], arrayScripts = [], onLoadAll }) => {
       if (loadedCount == arrayScripts.length && typeof onLoadAll == 'function') {
         onLoadAll();
       }
-      console.log(loadedCount);
 
     }
     const addedScript = arrayScripts.map((src) => {
@@ -19,7 +18,7 @@ const ScriptLoader = ({ arrayCss = [], arrayScripts = [], onLoadAll }) => {
       script.src = src;
       script.async = false
       script.onerror = () => {
-        console.log('Không load được script');
+        console.log('Không load được script số ' + loadedCount);
 
       }
       document.body.appendChild(script)

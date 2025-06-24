@@ -30,7 +30,7 @@ const ListOrder = () => {
   }, [])
   return (
     <>
-      {
+      {/* {
         !loading && (
           <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
         )}
@@ -92,7 +92,7 @@ const ListOrder = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

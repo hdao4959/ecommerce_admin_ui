@@ -40,11 +40,11 @@ const ListCategory = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
-  ScriptLoader(arrayCss, arrayScripts)
+  // ScriptLoader(arrayCss, arrayScripts)
 
   return (
     <>
-      <div className="animated fadeIn">
+      {/* <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
             <div className="card">
@@ -102,7 +102,7 @@ const ListCategory = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
 
     </>

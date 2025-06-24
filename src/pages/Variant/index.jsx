@@ -15,7 +15,6 @@ const ListVariant = () => {
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
-    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",
@@ -30,12 +29,11 @@ const ListVariant = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
-  // ScriptLoader(arrayCss, arrayScripts)
 
   return (
     <>
 
-      {!loading && (
+      {/* {!loading && (
         <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
       )}
 
@@ -89,7 +87,6 @@ const ListVariant = () => {
                                 <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
                               </div>
                             </td>
-                            {/* <td><button className='btn btn-success'>Chi tiết</button></td> */}
                           </tr>
                         )
                         )}
@@ -101,7 +98,7 @@ const ListVariant = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

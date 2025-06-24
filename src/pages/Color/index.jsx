@@ -57,7 +57,7 @@ const ListColor = () => {
 
   return (
     <>
-      <div className="animated fadeIn">
+      {/* <div className="animated fadeIn">
         <div className="row">
           <div className="col-md-12">
             <div className="card">
@@ -121,7 +121,7 @@ const ListColor = () => {
     </div >
           </div >
         </div >
-      </div >
+      </div > */}
     </>
   );
 

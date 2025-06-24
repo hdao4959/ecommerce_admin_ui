@@ -34,7 +34,7 @@ const ListProduct = () => {
   return (
     <>
 
-      {!loading && (
+      {/* {!loading && (
         <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
       )}
 
@@ -87,7 +87,6 @@ const ListProduct = () => {
                                 <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
                               </div>
                             </td>
-                            {/* <td><button className='btn btn-success'>Chi tiết</button></td> */}
                           </tr>
                         )
                         )}
@@ -101,7 +100,7 @@ const ListProduct = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }
