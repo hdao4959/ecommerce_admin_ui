@@ -16,7 +16,6 @@ const useApi = (apiFunc, autoFetch = false, ...initialArgs) => {
         toast.success(response.data.message)
       }
     } catch (error) {
-      
       setError(error?.response?.data?.errors || error?.response?.data?.message || "Có lỗi không xác định");
       toast.error(error?.response?.data?.errors || error?.response?.data?.message || "Có lỗi không xác định")
       throw error
