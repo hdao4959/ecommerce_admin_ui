@@ -1,13 +1,14 @@
-import { useEffect } from 'react'
+import { useState } from 'react'
 import ScriptLoader from '../../common/ScriptLoader'
 import formatPrice from '../../utils/formatPrice'
 import formatTimestamp from '../../utils/formatTimestamp'
 import PAYMENT_METHODS from '../../constants/paymentMethods'
 import ORDER_METHODS from '../../constants/orderMethods'
-import useApi from '../../hooks/useApi'
-import orderService from '../../services/orderService'
+import Datatable from '../../components/Datatable'
+import env from '../../config/env'
 
 const ListOrder = () => {
+  const [loadAllScript, setLoadAllScript] = useState(false);
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
   ]
@@ -24,16 +25,99 @@ const ListOrder = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
-  const { data, loading, error, fetchApi } = useApi(orderService.getAll);
-  useEffect(() => {
-    fetchApi()
-  }, [])
+  const columnTitles = ["#", "Tên người nhận", "Số điện thoại", "Email", "Thanh toán", "Trạng thái", "Tuỳ chọn"]
+
+
+  const columns = [
+    {
+      className: 'align-content-center',
+      data: 'name'
+    },
+    {
+      className: 'align-content-center',
+      data: 'phone_number',
+      render: function (data) {
+        return data ? data : 'Chưa cập nhật'
+      }
+    },
+    {
+      className: 'align-content-center',
+      data: 'email',
+      render: function (data) {
+        return data ? data : 'Chưa cập nhật'
+      }
+    },
+    {
+      className: 'align-content-center',
+      data: 'payment_status',
+      render: function (data) {
+        return data ?
+          `<span class="badge badge-${PAYMENT_METHODS[data].badge_color}">${PAYMENT_METHODS[data].name}</span>`
+          : data
+      }
+    },
+    {
+      className: 'align-content-center',
+      data: 'status',
+      render: function (data) {
+        return data ?
+          `<span class="badge badge-${ORDER_METHODS[data].badge_color}">${ORDER_METHODS[data].name}</span>`
+          : data
+      }
+    }
+  ]
+
+  const showMore = (d) => {
+    return `
+      <table class="table border">
+        <tbody>
+          <tr>
+            <th>Id</th>
+            <td>${d._id}</td>
+          </tr>
+          <tr>
+            <th>Họ và tên</th>
+            <td>${d.name}</td>
+          </tr>
+          <tr>
+            <th>Số điện thoại</th>
+            <td>${d.phone_number}</td>
+          </tr>
+          <tr>
+            <th>Email</th>
+            <td>${d.email}</td>
+          </tr>
+          <tr>
+            <th>Ghi chú</th>
+            <td>${d.note}</td>
+          </tr>
+          <tr>
+            <th>Tổng tiền</th>
+            <td>${formatPrice(d.amount)}</td>
+          </tr>
+          <tr>
+            <th>Trạng thái thanh toán</th>
+            <td>
+            <span class="badge badge-${PAYMENT_METHODS[d.payment_status].badge_color}"> ${PAYMENT_METHODS[d.payment_status].name}</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Trạng thái đơn hàng</th>
+            <td>
+            <span class="badge badge-${ORDER_METHODS[d.status].badge_color}"> ${ORDER_METHODS[d.status].name}</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Ngày đặt hàng</th>
+            <td>${formatTimestamp(d.created_at)}</td>
+          </tr>
+        </tbody>
+      </table>`
+  }
+
   return (
     <>
-      {/* {
-        !loading && (
-          <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
-        )}
+      <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} onLoadAll={() => setLoadAllScript(true)} />
       <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
@@ -42,57 +126,16 @@ const ListOrder = () => {
                 <strong className="card-title">Danh sách <span className='text-info'>Đơn hàng</span></strong>
               </div>
               <div className="card-body">
-                <table id="bootstrap-data-table" className="table table-striped table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Mã đơn hàng</th>
-                      <th>Tên người nhận</th>
-                      <th>Số điện thoại</th>
-                      <th>Email</th>
-                      <th>Tổng tiền</th>
-                      <th>Ngày đặt</th>
-                      <th>Thanh toán</th>
-                      <th>Trạng thái</th>
-                      <th>Tuỳ chọn</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                      <tr>
-                        <td colSpan="9" className="text-center">
-                          <i className="fa fa-spinner fa-spin fa-2x text-primary"></i>
-                          <p>Đang tải dữ liệu...</p>
-                        </td>
-                      </tr>
-                    ) : (
-                      <>
-                        {data.orders && data.orders.map((order, index) => (
-                          <tr key={index}>
-                            <td className='align-content-center'>{order._id}</td>
-                            <td className='align-content-center'>{order.name}</td>
-                            <td className='align-content-center'>{order.phone_number}</td>
-                            <td className='align-content-center'>{order.email}</td>
-                            <td className='align-content-center'>{formatPrice(order.amount)}</td>
-                            <td className='align-content-center'>{formatTimestamp(order.created_at)}</td>
-                            <td className='align-content-center'><span className={`badge badge-${PAYMENT_METHODS[order?.payment_status]?.badge_color}`}>{PAYMENT_METHODS[order.payment_status].name}</span></td>
-                            <td className='align-content-center'><span className={`badge badge-${ORDER_METHODS[order?.status]?.badge_color}`}>{ORDER_METHODS[order?.status]?.name}</span></td>
-                            <td className='align-content-center'>
-                              <div className="d-flex justify-content-around">
-                                <a href={`/order/${order._id}`} className="btn btn-success" >Chi tiết</a>
-                              </div>
-                            </td>
-                          </tr>
-                        )
-                        )}
-                      </>
-                    )}
-                  </tbody>
-                </table>
+                {
+                  loadAllScript && (
+                    <Datatable tableId="order-datatable" ajaxUrl={`${env.VITE_ADMIN_API_URL}/orders`} columns={columns} columnTitles={columnTitles} showMore={showMore} options={['show']} endPoint="order" />
+                  )
+                }
               </div>
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </>
   )
 }

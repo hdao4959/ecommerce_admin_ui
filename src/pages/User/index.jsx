@@ -4,12 +4,13 @@ import env from '../../config/env.js'
 import convertTimestamp from '../../utils/convertTimestamp.js';
 import Datatable from '../../components/Datatable.jsx';
 import { useState } from 'react';
-const ListUser = () => {
 
-  const [renderDatatable, setRenderDatatable] = useState(false);
+const ListUser = () => {
+  const [loadAllScript, setLoadAllScript] = useState(false);
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
   ]
+
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",
     "/assets/js/lib/data-table/dataTables.bootstrap.min.js",
@@ -36,12 +37,6 @@ const ListUser = () => {
   // Nội dung của cột cho datatable
   const columns = [
     {
-      className: 'details-control align-content-center text-center',
-      orderable: false,
-      data: null,
-      defaultContent: '<i class="fa fa-plus-circle text-primary" style="cursor:pointer"></i>',
-    },
-    {
       className: 'align-content-center',
       data: 'name'
     },
@@ -63,46 +58,32 @@ const ListUser = () => {
         return data ? 'Google' : 'Tài khoản thường'
       }
     },
-    {
-      className: 'align-content-center',
-      data: null,
-      render: function (data) {
-        return `
-                <div class="d-flex justify-content-around" style="gap:2px">
-                  <a href="/user/${data._id}" class="btn btn-success"><i class="menu-icon fa fa-info-circle"></i></a>
-                  <button class="btn btn-secondary"><i class="menu-icon fa fa-edit"></i></button>
-                  <button data-id=${data._id} class="btn-delete btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>
-                </div>
-              `;
-      }
-    }
+   
   ]
 
-
-  const showMore = (d) => (
-    <table style="margin-left:35px">
-      <thead>
-        <tr>
-          <th>Id:</th><th>${d._id}</th>
-        </tr>
-      </thead>
+  const showMore = (d) => {
+    return `<table class="table border">
+   
       <tbody>
-        <tr><td>Họ và tên:</td><td>${d.name}</td></tr>
-        <tr><td>Email:</td><td>${d.email}</td></tr>
-        <tr><td>Số điên thoại:</td><td>${d.phone_number ?? 'Chưa cập nhật'}</td></tr>
-        <tr><td>Tỉnh/Thành phố:</td><td>${d.province ?? 'Chưa cập nhật'}</td></tr>
-        <tr><td>Quận/Huyện:</td><td>${d.district ?? 'Chưa cập nhật'}</td></tr>
-        <tr><td>Phường/Xã:</td><td>${d.ward ?? 'Chưa cập nhật'}</td></tr>
-        <tr><td>Ngày tạo tk:</td><td>${convertTimestamp(d.created_at) ?? 'Chưa cập nhật'}</td></tr>
-        <tr><td>Lần cập nhật gần nhất:</td><td>${convertTimestamp(d.updated_at) ?? 'Chưa cập nhật'}</td></tr>
+      <tr>
+        <th>Id:</th><td>${d._id}</td>
+      </tr>
+        <tr><th>Họ và tên:</th><td>${d.name}</td></tr>
+        <tr><th>Email:</th><td>${d.email}</td></tr>
+        <tr><th>Số điên thoại:</th><td>${d.phone_number ?? 'Chưa cập nhật'}</td></tr>
+        <tr><th>Loại tài khoản:</th><td>${d.google_id ? 'Google' : 'Tài khoản thường'}</td></tr>
+        <tr><th>Tỉnh/Thành phố:</th><td>${d.province ?? 'Chưa cập nhật'}</td></tr>
+        <tr><th>Quận/Huyện:</th><td>${d.district ?? 'Chưa cập nhật'}</td></tr>
+        <tr><th>Phường/Xã:</th><td>${d.ward ?? 'Chưa cập nhật'}</td></tr>
+        <tr><th>Ngày tạo tài khoản:</th><td>${convertTimestamp(d.created_at) ?? 'Chưa cập nhật'}</td></tr>
+        <tr><th>Lần cập nhật gần nhất:</th><td>${convertTimestamp(d.updated_at) ?? 'Chưa cập nhật'}</td></tr>
       </tbody>
-    </table>
-
-  )
+    </table>`
+  }
 
   return (
     <>
-      <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} onLoadAll={() => setRenderDatatable(true)} />
+      <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} onLoadAll={() => setLoadAllScript(true)} />
       <div className="animated fadeIn">
         <div className="row">
           <div className="col-md-12">
@@ -113,9 +94,8 @@ const ListUser = () => {
               </div>
               <div className="card-body">
                 {
-                  renderDatatable &&
-                    <Datatable tableId='user-datatable' columnTitles={columnTitles} columns={columns} ajaxUrl={`${env.VITE_ADMIN_API_URL}/users`} showMore={showMore} onDelete={true} />
-
+                  loadAllScript &&
+                  <Datatable tableId='user-datatable' columnTitles={columnTitles} columns={columns} ajaxUrl={`${env.VITE_ADMIN_API_URL}/users`} showMore={showMore} onDelete={true} options={['show', 'edit', 'delete']} endPoint="user"/>
                 }
               </div>
             </div >

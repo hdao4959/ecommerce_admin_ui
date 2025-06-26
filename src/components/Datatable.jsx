@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete }) => {
+const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete = false, options = [], endPoint = null }) => {
 
   useEffect(() => {
     const $ = window.$;
@@ -10,6 +10,9 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
       if ($.fn.DataTable.isDataTable($table)) {
         $table.DataTable().clear().destroy();
       }
+
+
+
       $table.DataTable({
         processing: true,
         serverSide: true,
@@ -50,7 +53,28 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
               })
             })
         },
-        columns
+
+        columns: [
+          {
+            className: 'details-control align-content-center text-center',
+            orderable: false,
+            data: null,
+            defaultContent: '<i class="fa fa-plus-circle text-primary" style="cursor:pointer"></i>',
+          },
+          ...columns,
+          {
+            className: 'align-content-center',
+            data: null,
+            render: function (data) {
+              return `
+              <div class="d-flex justify-content-around" style="gap:2px">
+              ${options.includes('show') ? `<a href="/${endPoint}/${data._id}" class="btn btn-success"><i class="menu-icon fa fa-info-circle"></i></a>` : ''}
+              ${options.includes('edit') ? `<button class="btn btn-secondary"><i class="menu-icon fa fa-edit"></i></button>` : ''}
+              ${options.includes('delete') ? `<button data-id="${data._id}" class="btn-delete btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>` : ''}
+              </div>`;
+            }
+          }
+        ]
       }
       )
       if (onDelete) {
@@ -64,7 +88,6 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
             }).then(res => res.json())
               .then(res => {
                 if (res.success == true) {
-                  console.log(res);
                   $table.DataTable().ajax.reload(null, false)
                   toast.success(res?.message)
                 } else {
@@ -76,6 +99,7 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
       }
 
       if (typeof showMore === 'function') {
+
         $table.find('tbody').on('click', 'td.details-control', function () {
           const tr = $(this).closest('tr');
           const row = $table.DataTable().row(tr);
