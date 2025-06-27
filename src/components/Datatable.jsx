@@ -1,17 +1,14 @@
 import { useEffect } from "react"
 
 const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete = false, options = [], endPoint = null }) => {
-
+  
   useEffect(() => {
     const $ = window.$;
     if ($.fn.DataTable) {
       const $table = $(`#${tableId}`);
-
       if ($.fn.DataTable.isDataTable($table)) {
         $table.DataTable().clear().destroy();
       }
-
-
 
       $table.DataTable({
         processing: true,
@@ -45,6 +42,8 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
           fetch(ajaxUrl + query)
             .then(res => res.json())
             .then(response => {
+              console.log(response);
+              
               callback({
                 draw: data?.draw,
                 recordsTotal: response?.data?.meta?.total,
@@ -70,7 +69,7 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
               <div class="d-flex justify-content-around" style="gap:2px">
               ${options.includes('show') ? `<a href="/${endPoint}/${data._id}" class="btn btn-success"><i class="menu-icon fa fa-info-circle"></i></a>` : ''}
               ${options.includes('edit') ? `<button class="btn btn-secondary"><i class="menu-icon fa fa-edit"></i></button>` : ''}
-              ${options.includes('delete') ? `<button data-id="${data._id}" class="btn-delete btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>` : ''}
+              ${options.includes('delete') ? `<button data-id="${data._id}" ${data.type == 'not_delete' ? 'disabled' : ""} class="btn-delete btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>` : ''}
               </div>`;
             }
           }

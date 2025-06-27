@@ -1,31 +1,40 @@
 import React, { useEffect, useState } from 'react'
 import ScriptLoader from '../../common/ScriptLoader'
-import axiosInstance from '../../utils/axios'
+import Datatable from '../../components/Datatable';
+import env from '../../config/env';
 
 const ListCategory = () => {
+  const [loadAllScript, setLoadAllScript] = useState(false)
 
-  const [arrayCategory, setArrayCategory] = useState([]);
+  const columnTitles = [
+    "#",
+    "Id",
+    "Tên",
+    "Trạng thái",
+    "Tuỳ chọn"
+  ]
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axiosInstance.get('/categories');
-        setArrayCategory(data.data);
-      } catch (error) {
-        console.log(error);
+  const columns = [
+    {
+      className: 'align-content-center',
+      data: '_id'
+    },
+    {
+      className: 'align-content-center',
+      data: 'name'
+    },
+    {
+      className: 'align-content-center',
+      data: 'is_active',
+      render: function (data) {
+        return data == true ? 'Active' : 'Not active'
       }
-    }
-
-    fetchData();
-
-  }, [])
-
-
+    },
+  ]
 
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
-    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",
@@ -40,11 +49,10 @@ const ListCategory = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
-  // ScriptLoader(arrayCss, arrayScripts)
-
   return (
     <>
-      {/* <div className="animated fadeIn">
+      <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} onLoadAll={() => setLoadAllScript(true)} />
+      <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
             <div className="card">
@@ -52,10 +60,14 @@ const ListCategory = () => {
                 <div >
                   <strong className="card-title">Danh sách<span className='text-info'>Danh mục sản phẩm</span></strong>
                 </div>
-                  <a href='/category/add' className='btn btn-success'> Thêm mới</a>
+                <a href='/category/add' className='btn btn-success'> Thêm mới</a>
               </div>
               <div className="card-body">
-                <table
+                {
+                  loadAllScript &&
+                  <Datatable ajaxUrl={`${env.VITE_ADMIN_API_URL}/categories`} tableId="category-datatable" columnTitles={columnTitles} columns={columns} options={['edit', 'show', 'delete']} endPoint="category" onDelete={true} />
+                }
+                {/* <table
                   id="bootstrap-data-table"
                   className="table table-striped table-bordered"
                 >
@@ -97,12 +109,12 @@ const ListCategory = () => {
                     }
 
                   </tbody>
-                </table>
+                </table> */}
               </div>
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
 
 
     </>

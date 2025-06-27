@@ -27,7 +27,6 @@ const ListOrder = () => {
 
   const columnTitles = ["#", "Tên người nhận", "Số điện thoại", "Email", "Thanh toán", "Trạng thái", "Tuỳ chọn"]
 
-
   const columns = [
     {
       className: 'align-content-center',
