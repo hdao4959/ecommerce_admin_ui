@@ -31,6 +31,7 @@ const ListUser = () => {
     "Email",
     "Sđt",
     "Loại tk",
+    "Quyền",
     "Options"
   ]
 
@@ -58,6 +59,10 @@ const ListUser = () => {
         return data ? 'Google' : 'Tài khoản thường'
       }
     },
+    {
+      className: 'align-content-center',
+      data: 'role'
+    },
    
   ]
 
@@ -72,6 +77,7 @@ const ListUser = () => {
         <tr><th>Email:</th><td>${d.email}</td></tr>
         <tr><th>Số điên thoại:</th><td>${d.phone_number ?? 'Chưa cập nhật'}</td></tr>
         <tr><th>Loại tài khoản:</th><td>${d.google_id ? 'Google' : 'Tài khoản thường'}</td></tr>
+        <tr><th>Quyền:</th><td>${d.role}</td></tr>
         <tr><th>Tỉnh/Thành phố:</th><td>${d.province ?? 'Chưa cập nhật'}</td></tr>
         <tr><th>Quận/Huyện:</th><td>${d.district ?? 'Chưa cập nhật'}</td></tr>
         <tr><th>Phường/Xã:</th><td>${d.ward ?? 'Chưa cập nhật'}</td></tr>

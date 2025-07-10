@@ -90,7 +90,7 @@ const OrderInfo = ({ order, fetchOrder }) => {
             </select></strong>
           </div>
           <OrderStatusLine currentStatus={orderStatus} />
-
+              
         </div>
       </div>
     </div>

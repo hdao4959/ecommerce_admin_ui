@@ -1,29 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axios'
+import useApi from '../../hooks/useApi'
+import productService from '../../services/productService'
+import colorService from '../../services/colorService'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import variantService from '../../services/variantService'
 
 const AddVariant = () => {
+  const { data: resProductAllActive, fetchApi: fetchProductAllActive } = useApi(productService.getAllActive);
+  const { data: resColorAllActive, fetchApi: fetchColorAllActive } = useApi(colorService.getAllActive);
+  const {response: responseAddVariant, fetchApi: fetchAddVariant } = useApi(variantService.create);
+  const navigate = useNavigate()
   const [formVariant, setFormVariant] = useState({
     name: "",
     is_active: false,
     product_id: '',
   })
-  // Danh sách dòng sản phẩm có is_active = true
   const [productLineActives, setProductLineActives] = useState([]);
-  // Danh sách màu sắc có is_active = true
   const [colorActives, setColorActives] = useState([]);
 
+
   useEffect(() => {
-    (async () => {
-      try {
-        const productsResponse = await axiosInstance.get('/products?active=1');
-        const colorsResponse = await axiosInstance.get('/colors?active=1');
-        setProductLineActives(productsResponse.data.data.products)
-        setColorActives(colorsResponse.data.data.colors.map(color => ({ ...color, price: 0, stock: 0, image: color?.image || null, img: null })))
-      } catch (error) {
-        alert(error.response.message);
-      }
-    })()
+    fetchProductAllActive()
+    fetchColorAllActive()
   }, [])
+
+  useEffect(() => {
+    if (resProductAllActive) {
+      setProductLineActives(resProductAllActive.items);
+    }
+  }, [resProductAllActive])
+
+  useEffect(() => {
+    if (resColorAllActive) {
+      setColorActives(resColorAllActive.items.map(color => ({ ...color, price: 0, stock: 0, image: color?.image || null, img: null })))
+    }
+  }, [resColorAllActive])
 
   const handleChangeVariant = (event) => {
     const { name, value, type, checked } = event.target
@@ -67,24 +80,21 @@ const AddVariant = () => {
       delete cloneColor.name
       return cloneColor
     })
-    const form = new FormData;
-    form.append('variant', JSON.stringify(formVariant))
-    form.append('colors', JSON.stringify(formColor))
+    const formData = new FormData;
+    formData.append('variant', JSON.stringify(formVariant))
+    formData.append('colors', JSON.stringify(formColor))
     formColor?.forEach(color => {
-      form.append('images', color.image)
+      formData.append('images', color.image)
     });
-    try {
-      const { data } = await axiosInstance.post('/variants', form, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.message)
-    }
-    console.log(form);
+    fetchAddVariant(formData)
   }
+
+  useEffect(() => {
+    if (responseAddVariant && responseAddVariant?.success) {
+      navigate('/variant')
+      toast.success(responseAddVariant?.message)
+    }
+  }, [responseAddVariant])
 
   return (
     <div className="col-12">
@@ -161,7 +171,7 @@ const AddVariant = () => {
             </div>
 
             <strong>Biến thể</strong>
-            <p className='text-danger'>Những màu sắc không có <strong><i>giá</i></strong> hoặc <strong><i>số lượng</i></strong> sẽ không được thêm mới</p>
+            <p className='text-danger'>Những màu sắc không có <strong><i>giá</i></strong> hoặc <strong><i>số lượng</i></strong> sẽ không được thêm</p>
             <div>
               <div style={{ maxHeight: "500px", overflowY: 'auto' }}>
                 <table id='table_add_variant' className=' table table-striped border'  >
@@ -198,7 +208,7 @@ const AddVariant = () => {
           </form>
         </div>
         <div className="card-footer">
-          <button className='' style={{cursor: 'pointer'}} type="submit" onClick={(event) => handleSubmit(event)} >
+          <button className='' style={{ cursor: 'pointer' }} type="submit" onClick={(event) => handleSubmit(event)} >
             <i className="fa fa-dot-circle-o" /> Submit
           </button>
           <button type="reset" >

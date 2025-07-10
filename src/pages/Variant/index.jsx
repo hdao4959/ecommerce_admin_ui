@@ -1,18 +1,44 @@
 import React, { useEffect, useState } from 'react'
 import ScriptLoader from '../../common/ScriptLoader'
 import axiosInstance from '../../utils/axios';
+import Datatable from '../../components/Datatable';
+import env from '../../config/env';
 
 const ListVariant = () => {
-  const [variants, setVariants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    (async () => {
-      const { data } = await axiosInstance.get('/variants');
-      setVariants(data.data.variants);
-      setLoading(false);
-    })()
-  }, [])
+  const [loadAllScript, setLoadAllScript] = useState(false);
 
+  const columnTitles = [
+    "#",
+    "Id",
+    "Tên biến thể",
+    "Tên sản phẩm",
+    "Active",
+    "Tuỳ chọn"
+  ]
+
+  const columns = [
+    {
+      className: 'align-content-center',
+      data: '_id'
+    },
+    {
+      className: 'align-content-center',
+      data: 'name'
+    },
+    {
+      className: 'align-content-center',
+      data: 'product.name'
+    },
+    {
+      className: 'align-content-center',
+      data: 'is_active',
+      render: function (data) {
+        return data == true ?
+          `<i class="menu-icon fa fa-check-circle text-success" />` :
+          `<i class="menu-icon fa fa-minus-square text-danger" />`
+      }
+    },
+  ]
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
   ]
@@ -29,14 +55,44 @@ const ListVariant = () => {
     "/assets/js/init/datatables-init.js"
   ]
 
+  const options = [
+    'show', 'edit', 'delete'
+  ]
 
+  const showMore = (d) => {
+    return `
+    <table class='table border'>
+    <tbody>
+    <tr>
+      <td><strong>Id</strong></td>
+      <td>${d?._id}</td>
+    </tr>
+    <tr>
+      <td><strong>Tên biến thể</strong></td>
+      <td>${d?.name}</td>
+    </tr>
+    <tr>
+      <td><strong>Dòng sản phẩm</strong></td>
+      <td>${d?.product?.name}</td>
+    </tr>
+    <tr>
+      <td><strong>Màu sắc</strong></td>
+      <td>${d?.variantColor?.map(varColor => (varColor?.color?.name)).join('|')}</td>
+    </tr>
+    <tr>
+      <td><strong>Active</strong></td>
+      <td>${d?.is_active == true ?
+        `<i class="menu-icon fa fa-check-circle text-success" />` :
+        `<i class="menu-icon fa fa-minus-square text-danger" />`
+      }</td>
+    </tr>
+    </tbody>
+    </table>
+    `
+  }
   return (
     <>
-
-      {/* {!loading && (
-        <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} />
-      )}
-
+      <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} onLoadAll={() => setLoadAllScript(true)} />
       <div className="animated fadeIn">
         <div className="row ">
           <div className="col-md-12">
@@ -44,61 +100,18 @@ const ListVariant = () => {
               <div className="card-header d-flex justify-content-between">
                 <strong className="card-title">Danh sách <span className='text-info'>Biến thể</span></strong>
                 <a href='/variant/add' className='btn btn-success'> Thêm mới</a>
-
               </div>
               <div className="card-body">
-                <table
-                  id="bootstrap-data-table"
-                  className="table table-striped table-bordered"
-                >
-                  <thead>
-                    <tr>
-                      <th>Id</th>
-                      <th>Tên biến thể</th>
-                      <th>Tên sản phẩm</th>
-                      <th>Active</th>
-                      <th>Tuỳ chọn</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                      <tr>
-                        <td colSpan="4" className="text-center">
-                          <i className="fa fa-spinner fa-spin fa-2x text-primary"></i>
-                          <p>Đang tải dữ liệu...</p>
-                        </td>
-                      </tr>
-                    ) : (
-                      <>
-                        {variants.map((variant, index) => (
-                          <tr key={index}>
-                            <td>{variant._id}</td>
-                            <td>{variant.name}</td>
-                            <td>{variant.product.name}</td>
-                            <td>{variant.is_active ? 'true' : 'false'}</td>
-                            <td className='align-content-center'>
-                              <div className="d-flex justify-content-around">
-                                <a href={`/variant/${variant._id}`} className="btn btn-success" >
-                                  Chi tiết
-                                </a>
-                                <a href={`/variant/${variant._id}/edit`} className='btn btn-secondary'>
-                                  <i className='menu-icon fa fa-edit'></i>
-                                </a>
-                                <button className='btn btn-danger'><i className='menu-icon fa fa-trash-o'> </i></button>
-                              </div>
-                            </td>
-                          </tr>
-                        )
-                        )}
-                      </>
-                    )}
-                  </tbody>
-                </table>
+                {
+                  loadAllScript &&
+                  <Datatable
+                    ajaxUrl={`${env.VITE_ADMIN_API_URL}/variants`} columnTitles={columnTitles} columns={columns} tableId="variant-datatable" options={options} showMore={showMore} endPoint="variant" onDelete={true} />
+                }
               </div>
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </>
   )
 }

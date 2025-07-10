@@ -4,7 +4,7 @@ import axiosInstance from "../utils/axios";
 const getAll = () => axiosInstance.get('/orders')
 
 const getDetail = (id) => {
-  if (!id) throw new Error("Thiếu id khi gọi getDetail")
+  if (!id) throw new Error("Thiếu id khi gọi getDetail order")
 
   return axiosInstance.get('/orders/' + id)
 }

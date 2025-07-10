@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useApi from '../../hooks/useApi';
 import categoryService from '../../services/categoryService';
 
-const AddCategory = () => {
-  const { data: responseAllCategory, fetchApi: fetchAllCategory } = useApi(categoryService.getAll);
-  const { response: resAddCategory, fetchApi: fetchAddCategory } = useApi(categoryService.create);
-  const navigate = useNavigate()
+const UpdateCategory = () => {
+  const { data: dataCategory, fetchApi: fetchCategory} = useApi(categoryService.getDetail);
+  const { data: dataAllCategory, fetchApi: fetchAllCategory } = useApi(categoryService.getAll);
+  const { response: resUpdateCategory, fetchApi: fetchUpdateCategory} = useApi(categoryService.update);
+ 
+  const navigate = useNavigate();
+  const {id} = useParams();
   const [categories, setCategories] = useState([]);
-
+  
   const [formData, setFormData] = useState({
     name: '',
     parent_id: "",
@@ -17,40 +20,51 @@ const AddCategory = () => {
   })
 
   const handleChange = (event) => {
+    const {name, value, type, checked} = event.target
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value
+      [name]: type == 'checkbox' ? checked : value
     })
   }
 
   useEffect(() => {
     fetchAllCategory()
+    fetchCategory(id)
   }, [])
 
 
   useEffect(() => {
-    if (responseAllCategory) {
-      setCategories(responseAllCategory.items)
+    if(dataCategory){
+      setFormData(prev => ({
+        ...prev,
+        name: dataCategory.name,
+        parent_id: dataCategory.parent_id,
+        is_active: dataCategory.is_active
+      }))
     }
-  }, [responseAllCategory])
+
+    if (dataAllCategory) {
+      setCategories(dataAllCategory.items.filter(cate => cate?.type !== 'not_delete' && cate._id !== id))
+    }
+  }, [dataCategory, dataAllCategory])
 
 
   const submitForm = async () => {
-    fetchAddCategory(formData)
+    fetchUpdateCategory(id, formData)
   }
 
   useEffect(() => {
-    if (resAddCategory && resAddCategory.success) {
+    if(resUpdateCategory && resUpdateCategory.success){
       navigate('/category')
     }
-  }, [resAddCategory])
+  }, [resUpdateCategory])
 
 
   return (
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          Thêm mới <strong>Danh mục sản phẩm</strong>
+          Chỉnh sửa <strong>Danh mục sản phẩm</strong>
         </div>
         <form
           type='submit' onSubmit={(e) => {
@@ -74,12 +88,11 @@ const AddCategory = () => {
                   type="text"
                   id="text-input"
                   name="name"
-                  placeholder="Text"
+                  placeholder="Tên danh mục"
                   className="form-control"
                   value={formData.name}
                   onChange={(event) => handleChange(event)}
                 />
-                {/* <small className="form-text text-muted">This is a help text</small> */}
               </div>
             </div>
 
@@ -93,13 +106,12 @@ const AddCategory = () => {
                 </label>
               </div>
               <div className="col-12 col-md-9">
-                <select name="parent_id" id="select" className="form-control" value={formData.parent_id} onChange={(event) => handleChange(event)}>
-                  <option value="">--Danh mục cha--</option>
+                <select name="parent_id" id="select" className="form-control" value={formData.parent_id || ''} onChange={(event) => handleChange(event)}>
+                  <option value="">--Chọn danh mục cha--</option>
                   {categories.map((cate, index) =>
 
                     <option key={index} value={cate._id}>{cate.name}</option>
                   )}
-
                 </select>
               </div>
             </div>
@@ -117,7 +129,8 @@ const AddCategory = () => {
                         type="checkbox"
                         id="checkbox1"
                         name="is_active"
-                        defaultValue={true}
+                        defaultValue={formData.is_active}
+                        checked={formData.is_active}
                         className="form-check-input"
                         onChange={(event) => handleChange(event)}
                       />
@@ -133,12 +146,9 @@ const AddCategory = () => {
           </div>
 
           <div className="card-footer">
-            <a href='/category' type="reset" className="btn btn-secondary btn-sm">
-              {/* <i className="fa fa-ban" /> */}
-               Quay lại
-            </a>
-            <button type='submit' className="btn btn-sm">
-              <i className="fa fa-dot-circle-o" /> Submit
+            <Link to="/category" className='btn btn-secondary btn-sm'>Quay lại</Link>
+            <button type='submit' className="btn btn-primary btn-sm">
+              <i className="fa fa-dot-circle-o" /> Chỉnh sửa
             </button>
           </div>
 
@@ -151,4 +161,4 @@ const AddCategory = () => {
   )
 }
 
-export default AddCategory
+export default UpdateCategory

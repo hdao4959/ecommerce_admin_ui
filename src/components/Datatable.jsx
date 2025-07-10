@@ -1,7 +1,37 @@
 import { useEffect } from "react"
+import { toast } from "react-toastify";
 
 const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete = false, options = [], endPoint = null }) => {
-  
+  let dataTableColumns = [];
+
+  const columnShowMore = {
+    className: 'details-control align-content-center text-center',
+    orderable: false,
+    data: null,
+    defaultContent: '<i class="fa fa-plus-circle text-primary" style="cursor:pointer"></i>',
+  }
+
+  const columnOptions = {
+    className: 'align-content-center',
+    data: null,
+    render: function (data) {
+      return `
+              <div class="d-flex justify-content-around" style="gap:2px">
+              ${options.includes('show') ? `<a title="Chi tiết" href="/${endPoint}/${data._id}" class="btn btn-success"><i class="menu-icon fa fa-info-circle"></i></a>` : ''}
+              ${options.includes('edit') ? `<a title="Chỉnh sửa" class="btn btn-secondary" href="/${endPoint}/${data._id}/edit"><i class="menu-icon fa fa-edit"></i></a>` : ''}
+              ${options.includes('delete') ? `<button title="Xoá" data-id="${data._id}" ${data.type == 'not_delete' ? 'disabled' : ""} class="btn-delete btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>` : ''}
+              </div>`;
+    }
+  }
+  if (showMore && typeof showMore === 'function') {
+    dataTableColumns = [columnShowMore, ...columns, columnOptions]
+  } else {
+    dataTableColumns = [...columns, columnOptions]
+  }
+
+
+
+
   useEffect(() => {
     const $ = window.$;
     if ($.fn.DataTable) {
@@ -13,12 +43,11 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
       $table.DataTable({
         processing: true,
         serverSide: true,
-
         searchDelay: 1000,
         ajax: function (data, callback) {
           const keyword = data.search.value;
           const order = data?.order[0]
-          const direction = order?.dir
+          const direction = order?.dir 
           const column = order?.column
           const nameColumn = data?.columns[column]?.data;
           const limit = data?.length;
@@ -30,6 +59,8 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
           }
 
           if (direction && nameColumn) {
+            console.log(nameColumn);
+            
             params.push(`sortBy=${nameColumn}`)
             params.push(`orderBy=${direction}`)
           }
@@ -42,8 +73,6 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
           fetch(ajaxUrl + query)
             .then(res => res.json())
             .then(response => {
-              console.log(response);
-              
               callback({
                 draw: data?.draw,
                 recordsTotal: response?.data?.meta?.total,
@@ -52,28 +81,7 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
               })
             })
         },
-
-        columns: [
-          {
-            className: 'details-control align-content-center text-center',
-            orderable: false,
-            data: null,
-            defaultContent: '<i class="fa fa-plus-circle text-primary" style="cursor:pointer"></i>',
-          },
-          ...columns,
-          {
-            className: 'align-content-center',
-            data: null,
-            render: function (data) {
-              return `
-              <div class="d-flex justify-content-around" style="gap:2px">
-              ${options.includes('show') ? `<a href="/${endPoint}/${data._id}" class="btn btn-success"><i class="menu-icon fa fa-info-circle"></i></a>` : ''}
-              ${options.includes('edit') ? `<button class="btn btn-secondary"><i class="menu-icon fa fa-edit"></i></button>` : ''}
-              ${options.includes('delete') ? `<button data-id="${data._id}" ${data.type == 'not_delete' ? 'disabled' : ""} class="btn-delete btn btn-danger"><i class="menu-icon fa fa-trash-o"></i></button>` : ''}
-              </div>`;
-            }
-          }
-        ]
+        columns: dataTableColumns
       }
       )
       if (onDelete) {

@@ -1,7 +1,8 @@
 import React from 'react'
 import ListCategory from '../pages/Category'
 import AddCategory from '../pages/Category/AddCategory'
-import ChildrenCategory from '../pages/Category/ChildrenCategory'
+import DetailCategory from '../pages/Category/DetailCategory'
+import UpdateCategory from '../pages/Category/UpdateCategory'
 
 const categoryRoutes = [
   {
@@ -11,7 +12,10 @@ const categoryRoutes = [
     path: 'category/add', element: <AddCategory />
   },
   {
-    path: 'category/:id', element: <ChildrenCategory/>
+    path: 'category/:id/edit', element: <UpdateCategory />
+  },
+  {
+    path: 'category/:id', element: <DetailCategory/>
   }
 ]
 

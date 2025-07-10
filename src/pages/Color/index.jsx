@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import ScriptLoader from '../../common/ScriptLoader'
 import axiosInstance from '../../utils/axios'
+import Datatable from '../../components/Datatable';
+import env from '../../config/env';
 
 const ListColor = () => {
 
   const [arrayColor, setArrayColor] = useState([]);
-  const [loading, setLoading] = useState(true)
+  const [loadAllScript, setLoadAllScript] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await axiosInstance.get('/colors');
-        
+
         setArrayColor(data.data.colors);
       } catch (error) {
         console.log(error);
@@ -23,23 +25,39 @@ const ListColor = () => {
 
   }, [])
 
-  
-  const handleDeleteColor = async (id) => {
-    try {
-      const {data} = await axiosInstance.delete('/colors/' + id);
-      alert(data?.message)
-      
-      setArrayColor(prev => prev.filter(color => color._id != id));
-    } catch (error) {
-      alert(error?.response?.data.errors)
-    }
 
-  }
+  const columnTitles = [
+    'Id',
+    'Tên',
+    'Trạng thái',
+    'Options'
+  ]
+
+  const columns = [
+    {
+      className: 'align-content-center',
+      data: '_id'
+    },
+    {
+      className: 'align-content-center',
+      data: 'name'
+    },
+    {
+      className: 'align-content-center',
+      data: 'is_active',
+      render: function (data) {
+        return data == true ?
+          `<i class="menu-icon fa fa-check-circle text-success" />` :
+          `<i class="menu-icon fa fa-minus-square text-danger" />`
+      }
+    },
+  ]
+
+
 
 
   const arrayCss = [
     "/assets/css/lib/datatable/dataTables.bootstrap.min.css",
-    // 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800'
   ]
   const arrayScripts = [
     "/assets/js/lib/data-table/datatables.min.js",
@@ -57,7 +75,8 @@ const ListColor = () => {
 
   return (
     <>
-      {/* <div className="animated fadeIn">
+      <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts} onLoadAll={() => setLoadAllScript(true)} />
+      <div className="animated fadeIn">
         <div className="row">
           <div className="col-md-12">
             <div className="card">
@@ -66,62 +85,15 @@ const ListColor = () => {
                 <a href='/color/add' className='btn btn-success'> Thêm mới</a>
               </div>
               <div className="card-body">
-              
-                    <table id = "bootstrap-data-table" className = "table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Id</th>
-              <th>Tên</th>
-              <th>Trạng thái</th>
-              <th>Options</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-              <td colSpan="4" className="text-center">
-                <i className="fa fa-spinner fa-spin fa-2x text-primary"></i>
-                <p>Đang tải dữ liệu...</p>
-              </td>
-            </tr>
-            ) : (
-              <>
-              <ScriptLoader arrayCss={arrayCss} arrayScripts={arrayScripts}/>
-              {arrayColor.map((color, index) => (
-                <tr key={index} className="align-content-center">
-                  <td>{color._id}</td>
-                  <td>{color.name}</td>
-                  <td className="text-center">
-                    {color.is_active ? (
-                      <i className="menu-icon fa fa-check-circle text-success" />
-                    ) : (
-                      <i className="menu-icon fa fa-minus-square text-danger" />
-                    )}
-                  </td>
-                  <td>
-                    <div className="d-flex justify-content-around">
-                      <a href={`/color/${color._id}`} className="btn btn-success">Chi tiết</a>
-                      <button className="btn btn-secondary">
-                        <i className="menu-icon fa fa-edit"></i>
-                      </button>
-                      <button className="btn btn-danger" onClick={() => handleDeleteColor(color._id)}>
-                        <i className="menu-icon fa fa-trash-o"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            ) }
-            </>
-  )}
-          </tbody>
-        </table>
-                
-      </div>
-    </div >
+                {
+                  loadAllScript &&
+                  <Datatable tableId="color-datatable" ajaxUrl={`${env.VITE_ADMIN_API_URL}/colors`} columnTitles={columnTitles} columns={columns} options={['show', 'edit', 'delete']} endPoint="color" onDelete={true}/>
+                }
+              </div>
+            </div >
           </div >
         </div >
-      </div > */}
+      </div >
     </>
   );
 

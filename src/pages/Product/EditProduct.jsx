@@ -1,44 +1,48 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import axiosInstance from '../../utils/axios';
+import useApi from '../../hooks/useApi';
+import productService from '../../services/productService';
+import categoryService from '../../services/categoryService';
 
 const EditProduct = () => {
-  const { id } = useParams();
+  const { data: dataAllCategory, fetchApi: fetchAllCategory } = useApi(categoryService.getAll);
+  const { data: dataProductDetail, fetchApi: fetchProductDetail } = useApi(productService.getDetail);
+  const { data: dataChildrenOfCate, fetchApi: fetchChildrenOfCate } = useApi(categoryService.getChildrentOfCategory)
+  const { data: updateProduct, fetchApi: fetchUpdateProduct } = useApi(productService.update);
 
+  const { id } = useParams();
   const [categories, setCategories] = useState([]);
   const [childrenCategory, setChildrenCategory] = useState([]);
-  const [openVariant, setOpenVariant] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     is_active: false,
     category_id: '',
     parent_category_id: '',
-    variants: [
-      {
-        name_variant: '',
-        colors: []
-      }
-    ]
   });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const productsResponse = await axiosInstance.get('/products/' + id);
-        const categoriesResponse = await axiosInstance.get('/categories');
-        setFormData({
-          ...productsResponse.data.data,
-          parent_category_id: productsResponse?.data?.data?.category?.parent_id || ""
-        })
-        setCategories(categoriesResponse.data.data)
-        handleChangeCategory(productsResponse?.data?.data?.category?.parent_id);
-      } catch (error) {
-        console.log(error);
-      }
-    })()
-
-
+    fetchAllCategory()
+    fetchProductDetail(id)
   }, [])
+
+  useEffect(() => {
+    if (dataAllCategory && dataAllCategory.items) {
+      setCategories(dataAllCategory.items);
+    }
+  }, [dataAllCategory])
+
+  useEffect(() => {
+    if (dataProductDetail) {
+      setFormData({
+        name: dataProductDetail.name,
+        is_active: dataProductDetail?.is_active,
+        category_id: dataProductDetail?.category_id,
+        parent_category_id: dataProductDetail?.category?.parent_id || ""
+      })
+      handleChangeCategory(dataProductDetail?.category?.parent_id);
+    }
+  }, [dataProductDetail])
 
   const handleChangeProduct = (event) => {
     const { type, name, checked, value } = event.target;
@@ -47,133 +51,40 @@ const EditProduct = () => {
     }))
   }
 
-
   const handleChangeCategory = (idCategory) => {
-
     if (idCategory !== '') {
-      (async () => {
-        try {
-          const childrenCategoryResponse = await axiosInstance.get('/categories/' + idCategory + '/children')
-          const childrenCategory = childrenCategoryResponse.data.data.childrenCategory;
-          if (childrenCategory.length == 0) {
-            setFormData(prev => ({
-              ...prev, category_id: ''
-            }))
-          }
-          setChildrenCategory(childrenCategory)
-        } catch (error) {
-          console.log(error);
-        }
-      })()
+      fetchChildrenOfCate(idCategory)
     } else {
       setChildrenCategory([])
     }
   }
 
-  const handleChangeVariant = (index, event) => {
-    const { value } = event.target;
-
-    setFormData(prev => ({
-      ...prev,
-      variants: prev.variants.map((variant, i) => i == index ? { ...variant, name_variant: value } : variant)
-    }))
-    console.log(value);
-
-  }
-
-  const handleChangeColor = (index, variantId, event) => {
-    const { type, name, value, files } = event.target
-    const file = files?.[0]
-    
-    let imgPreview = null
-    if (file) {
-      imgPreview = URL.createObjectURL(file);
+  useEffect(() => {
+    if (dataChildrenOfCate && dataChildrenOfCate?.childrenCategory.length == 0) {
+      setFormData(prev => ({
+        ...prev, category_id: ''
+      }))
     }
-
-    setFormData(prev => ({
-      ...prev,
-      variants: prev.variants.map(variant => {
-        if (variant._id == variantId) {
-          const newColors = [...variant.colors]
-          newColors[index] = {
-            ...newColors[index],
-            [name]: type == 'file' ? file : value,
-            'img_preview': imgPreview
-          }
-          return { ...variant, colors: newColors }
-        }
-        return variant
-      })
-    }))
-
-    setOpenVariant(prev => {
-      const newColors = [...prev.colors];
-      newColors[index] = {
-        ...newColors[index],
-        [name]: type == 'file' ? file : value,
-        'img_preview': imgPreview
-
-      }
-
-      return { ...prev, colors: newColors }
-    })
-    URL.revokeObjectURL(imgPreview)
-  }
-
-  const openColorModal = (variantId) => {
-    const modalColor = new window.bootstrap.Modal(document.getElementById('modal_color'));
-    const variant = formData.variants.find(variant => variant._id == variantId);
-    setOpenVariant(variant);
-    modalColor.show()
-  }
-  
+    setChildrenCategory(dataChildrenOfCate?.childrenCategory || [])
+  }, [dataChildrenOfCate])
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const formProduct = {
-        name: formData.name,
-        is_active: formData.is_active, 
-        category_id: formData.category_id
-      }
-
-
-      const formVariants = new FormData()
-
-  
-
-      formData.variants.forEach((variant, variantId) => {
-        formVariants.append(`variants[${variantId}][name_variant]`, variant.name_variant);
-
-        variant.colors.forEach((color, colorId) => {
-          // formVariants.append(`variants[${variantId}][colors][${colorId}][id]`, color._id)
-          // formVariants.append(`variants[${variantId}][colors][${colorId}][name]`, color.name)
-          // formVariants.append(`variants[${variantId}][colors][${colorId}][price]`, color.price)
-          // formVariants.append(`variants[${variantId}][colors][${colorId}][stock]`, color.stock)
-          formVariants.append(`variants[${variantId}][colors][${colorId}][img]`, color.img ? color.img : null)
-        })
-      })
-
-      
-      const {data} = await axiosInstance.put('/products/' + id + '/updateVariants', formVariants, {
-        headers: {
-          "Content-Type": 'multipart/form-data'
-        }
-      });
-      console.log(data);
-      
-    } catch (error) {
-      alert(error.response);
+    const formProduct = {
+      name: formData.name,
+      is_active: formData.is_active,
+      category_id: formData.category_id
     }
+    fetchUpdateProduct(id, formProduct)
   }
 
-      console.log(formData);
+
 
   return (
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          <strong>Thêm mới sản phẩm</strong>
+          <strong>Chỉnh sửa sản phẩm</strong>
         </div>
         <div className="card-body card-block">
           <form
@@ -198,10 +109,8 @@ const EditProduct = () => {
                   placeholder="Tên sản phẩm"
                   className="form-control"
                 />
-                <small className="form-text text-muted">This is a help text</small>
               </div>
             </div>
-
 
             <div className="row form-group">
               <div className="col col-md-3">
@@ -214,7 +123,6 @@ const EditProduct = () => {
                   {categories?.map((cate, index) => (
                     <option key={index} value={cate._id}>{cate.name}</option>
                   ))}
-
                 </select>
               </div>
             </div>
@@ -263,124 +171,19 @@ const EditProduct = () => {
                       Active
                     </label>
                   </div>
-
                 </div>
               </div>
             </div>
-
-            <strong>Biến thể</strong>
-            <div>
-              {/* <button type='button' className='btn btn-success my-2' onClick={() => addNewRowVariant()}>Thêm biến thể</button> */}
-              <div style={{ maxHeight: "300px", overflowY: 'auto' }}>
-                <table id='table_add_variant' className=' table table-striped border'  >
-                  <thead>
-                    <tr className='text-center' >
-                      <th>#</th>
-                      <th>Tên biến thể</th>
-                      <th>Màu sắc</th>
-                      <th>...</th>
-                    </tr>
-                  </thead>
-                  <tbody id='table_body_add_variant' >
-                    {formData?.variants?.map((variant, index) => (
-                      <tr key={index} className='text-center' >
-                        <th>{index}</th>
-                        <td><input
-                          type="text"
-                          id=""
-                          name="name_variant"
-                          placeholder="Tên biến thể"
-                          value={variant?.name_variant}
-                          onChange={(event) => handleChangeVariant(index, event)}
-                          className="form-control"
-                        /></td>
-                        <td>
-                          <button onClick={() => openColorModal(variant._id)} type='button' className='btn btn-primary'>Màu sắc</button>
-                        </td>
-
-
-
-                        <td>
-                          <button onClick={(event) => deleteRowVariant(index, event)} className='btn btn-danger' disabled={index == 0}>
-                            <i className='menu-icon fa fa-trash-o' ></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-
-              </div>
-            </div>
-
-
-          
-          <div className="modal fade" id="modal_color" tabIndex="-1"
-          // aria-labelledby="myModalLabel" aria-hidden="true"
-          >
-            <div className="modal-dialog modal-lg">
-              <div className="modal-content">
-
-                <div className="modal-header">
-                  <h5 className="modal-title" id="myModalLabel">Thêm màu sắc</h5>
-                </div>
-
-                <div className="modal-body">
-                  <table className='table border'>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Tên màu</th>
-                        <th>Giá</th>
-                        <th>Số lượng</th>
-                        <th>Hình ảnh</th>
-                        <th>Preview</th>
-                        <th>...</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {openVariant?.colors?.map((color, index) => (
-                        <tr key={index}>
-                          <td>{index}</td>
-                          <td>{color.name}</td>
-                          <td><input name='price' onChange={(event) => handleChangeColor(index, openVariant?._id, event)} type="number" value={color.price} className='form-control' /></td>
-                          <td><input name='stock' onChange={(event) => handleChangeColor(index, openVariant?._id, event)} type="number" value={color.stock} className='form-control' /></td>
-                          <td><input name='img' type="file" className='form-control-file' onChange={(event) => handleChangeColor(index, openVariant?._id, event)} /></td>
-                          <td><img src={color?.img_preview} style={{ width: '100px' }} alt="" /></td>
-                          <td><button className='btn btn-danger'>Xoá</button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="modal-footer">
-                  {/* <button type="button" className="btn btn-secondary" data-dismiss="modal">Đóng</button> */}
-                  <button type="button" className="btn btn-primary" data-dismiss="modal">Lưu thay đổi</button>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
           </form>
         </div>
 
-
-
-
         <div className="card-footer">
-          <button className='' type="submit" onClick={(event) => handleSubmit(event)} >
-            <i className="fa fa-dot-circle-o" /> Submit
-          </button>
-          <button type="reset" >
-            <i className="fa fa-ban" /> Reset
+          <Link className='btn btn-sm btn-secondary' to={'/product'}>Quay lại</Link>
+          <button className='btn btn-sm' type="submit" onClick={(event) => handleSubmit(event)} >
+            <i className="fa fa-dot-circle-o" /> Chỉnh sửa
           </button>
         </div>
-
       </div>
-
     </div>
   )
 }
