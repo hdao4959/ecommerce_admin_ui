@@ -26,7 +26,6 @@ const AddProduct = () => {
 
   const selectedParentCategory = (event) => {
     event.preventDefault();
-
     const idParentCategory = event.target.value
     if (!idParentCategory) {
       // Reset danh sách danh mục con khi danh mục cha chưa chọn
