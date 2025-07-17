@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import axiosInstance from '../../utils/axios';
 import { useNavigate } from 'react-router-dom';
 import useApi from '../../hooks/useApi';
 import colorService from '../../services/colorService';
+import specificationService from '../../services/specificationService';
 
-const AddColor = () => {
+const AddSpecification = () => {
   const navigate = useNavigate()
-  const {response: responseAddColor, fetchApi: fetchAddColor } = useApi(colorService.create);
+  const {response: responseAddSpecification, fetchApi: fetchAddSpecification } = useApi(specificationService.create);
   const [formData, setFormData] = useState({
     name: '',
     is_active: true
@@ -18,24 +18,23 @@ const AddColor = () => {
       ...formData,
       [name]: type == 'checkbox' ? checked : value,
     })
-
   }
 
   const submitForm = () => {
-    fetchAddColor(formData)
+    fetchAddSpecification(formData)
   }
 
   useEffect(() => {
-    if (responseAddColor && responseAddColor?.success) {
-      navigate('/color')
+    if (responseAddSpecification && responseAddSpecification?.success) {
+      navigate('/specification')
     }
-  }, [responseAddColor])
+  }, [responseAddSpecification])
 
   return (
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          Thêm mới <strong>Màu sắc</strong>
+          Thêm mới <strong>Thông số sản phẩm</strong>
         </div>
         <form
           type='submit' onSubmit={(e) => {
@@ -51,7 +50,7 @@ const AddColor = () => {
             <div className="row form-group">
               <div className="col col-md-3">
                 <label htmlFor="text-input" className=" form-control-label">
-                  Tên màu sắc
+                  Tên thông số
                 </label>
               </div>
               <div className="col-12 col-md-9">
@@ -59,7 +58,7 @@ const AddColor = () => {
                   type="text"
                   id="text-input"
                   name="name"
-                  placeholder="Text"
+                  placeholder="Tên thông số"
                   className="form-control"
                   value={formData.name}
                   onChange={(event) => handleChange(event)}
@@ -113,4 +112,4 @@ const AddColor = () => {
   )
 }
 
-export default AddColor
+export default AddSpecification

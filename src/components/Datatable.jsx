@@ -59,8 +59,6 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
           }
 
           if (direction && nameColumn) {
-            console.log(nameColumn);
-            
             params.push(`sortBy=${nameColumn}`)
             params.push(`orderBy=${direction}`)
           }

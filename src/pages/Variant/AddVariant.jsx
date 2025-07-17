@@ -3,28 +3,25 @@ import axiosInstance from '../../utils/axios'
 import useApi from '../../hooks/useApi'
 import productService from '../../services/productService'
 import colorService from '../../services/colorService'
-import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import variantService from '../../services/variantService'
+import Ckeditor from '../../components/Ckeditor'
+import specificationService from '../../services/specificationService'
 
 const AddVariant = () => {
-  const { data: resProductAllActive, fetchApi: fetchProductAllActive } = useApi(productService.getAllActive);
-  const { data: resColorAllActive, fetchApi: fetchColorAllActive } = useApi(colorService.getAllActive);
-  const {response: responseAddVariant, fetchApi: fetchAddVariant } = useApi(variantService.create);
+  const { data: resSpecAllActive, fetchApi: fetchSpecAllActive } = useApi(specificationService.getAllActive);
+  const { data: resProductAllActive, fetchApi: fetchProductAllActive } = useApi(productService.getAllActive, true);
+  const { data: resColorAllActive, fetchApi: fetchColorAllActive } = useApi(colorService.getAllActive, true);
+  const { response: responseAddVariant, fetchApi: fetchAddVariant } = useApi(variantService.create);
   const navigate = useNavigate()
   const [formVariant, setFormVariant] = useState({
     name: "",
     is_active: false,
     product_id: '',
+    description: ''
   })
   const [productLineActives, setProductLineActives] = useState([]);
   const [colorActives, setColorActives] = useState([]);
-
-
-  useEffect(() => {
-    fetchProductAllActive()
-    fetchColorAllActive()
-  }, [])
 
   useEffect(() => {
     if (resProductAllActive) {
@@ -92,7 +89,6 @@ const AddVariant = () => {
   useEffect(() => {
     if (responseAddVariant && responseAddVariant?.success) {
       navigate('/variant')
-      toast.success(responseAddVariant?.message)
     }
   }, [responseAddVariant])
 
@@ -140,10 +136,8 @@ const AddVariant = () => {
                   placeholder="Tên biến thể"
                   className="form-control"
                 />
-                <small className="form-text text-muted">This is a help text</small>
               </div>
             </div>
-
 
             <div className="row form-group">
               <div className="col col-md-3">
@@ -169,39 +163,90 @@ const AddVariant = () => {
                 </div>
               </div>
             </div>
-
-            <strong>Biến thể</strong>
-            <p className='text-danger'>Những màu sắc không có <strong><i>giá</i></strong> hoặc <strong><i>số lượng</i></strong> sẽ không được thêm</p>
             <div>
-              <div style={{ maxHeight: "500px", overflowY: 'auto' }}>
-                <table id='table_add_variant' className=' table table-striped border'  >
-                  <thead>
-                    <tr className='text-center' >
-                      <th>#</th>
-                      <th>Màu sắc</th>
-                      <th>Giá</th>
-                      <th>Số lượng</th>
-                      <th>Hình ảnh</th>
-                      <th>Preview</th>
-                    </tr>
-                  </thead>
-                  <tbody id='table_body_add_variant' >
-                    {colorActives?.map((color, index) => (
-                      <tr key={index} className='text-center' >
-                        <th>{index}</th>
-                        <td>{color.name}</td>
-                        <td><input name='price' type="number" className='form-control' min={0} defaultValue={color.price} onChange={(event) => handleChangeColor(color?._id, event)} /></td>
-                        <td><input name='stock' type="number" className='form-control' min={0} defaultValue={color.stock} onChange={(event) => handleChangeColor(color?._id, event)} /></td>
-                        <td>
-                          <label htmlFor={`file-upload-${color._id}`} className="btn btn-primary btn-sm">
-                            Chọn ảnh
-                          </label>
-                          <input id={`file-upload-${color._id}`} name='image' type="file" className='d-none' onChange={(event) => handleChangeColor(color?._id, event)} /></td>
-                        <td><img style={{ width: '50px', height: '50px', objectFit: 'cover' }} src={color.img} alt="Chưa có ảnh" /></td>
+              <span>Chi tiết</span>
+              <div>
+                <Ckeditor
+                  value={formVariant?.description} onChange={(data) => setFormVariant(prev => ({
+                    ...prev, description: data
+                  }))} />
+              </div>
+            </div>
+
+            <div className='my-2'>
+              <span>Thông số kĩ thuật</span>
+              <table className='table table-bordered '>
+                <thead>
+                  <tr>
+                    <th>Thông số</th>
+                    <th>Giá trị</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Ram</td>
+                    <td><input type="text" className='form-control' /></td>
+                    <td><button>Xoá</button></td>
+                  </tr>
+                  <tr>
+                    <td>CPU</td>
+                    <td><input type="text" className='form-control' /></td>
+                    <td><button>Xoá</button></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" className='d-flex'>
+                      <div>
+                        <select name="" className='form-control' id="">
+                          <option value="">--Thêm Thông số--</option>
+                          {
+                            // resSpecAllActive?.items
+                          }
+                        </select>
+                        <button className='btn btn-success'>Thêm</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div className='my-2'>
+              <strong>Biến thể</strong>
+              <p className='text-danger'>Những màu sắc không có <strong><i>giá</i></strong> hoặc <strong><i>số lượng</i></strong> sẽ không được thêm</p>
+              <div>
+                <div style={{ maxHeight: "300px", overflowY: 'auto' }}>
+                  <table id='table_add_variant' className=' table table-bordered'  >
+                    <thead>
+                      <tr className='text-center' >
+                        <th>#</th>
+                        <th>Màu sắc</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Hình ảnh</th>
+                        <th>Preview</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody id='table_body_add_variant' >
+                      {colorActives?.map((color, index) => (
+                        <tr key={index} className='text-center' >
+                          <th>{index}</th>
+                          <td>{color.name}</td>
+                          <td><input name='price' type="number" className='form-control' min={0} defaultValue={color.price} onChange={(event) => handleChangeColor(color?._id, event)} /></td>
+                          <td><input name='stock' type="number" className='form-control' min={0} defaultValue={color.stock} onChange={(event) => handleChangeColor(color?._id, event)} /></td>
+                          <td>
+                            <label htmlFor={`file-upload-${color._id}`} className="btn btn-primary btn-sm">
+                              Chọn ảnh
+                            </label>
+                            <input id={`file-upload-${color._id}`} name='image' type="file" className='d-none' onChange={(event) => handleChangeColor(color?._id, event)} /></td>
+                          <td><img style={{ width: '50px', height: '50px', objectFit: 'cover' }} src={color.img} alt="Chưa có ảnh" /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 

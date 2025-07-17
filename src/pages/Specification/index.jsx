@@ -4,7 +4,7 @@ import axiosInstance from '../../utils/axios'
 import Datatable from '../../components/Datatable';
 import env from '../../config/env';
 
-const ListColor = () => {
+const ListSpecification = () => {
 
   const [loadAllScript, setLoadAllScript] = useState(false)
 
@@ -69,7 +69,7 @@ const ListColor = () => {
               <div className="card-body">
                 {
                   loadAllScript &&
-                  <Datatable tableId="color-datatable" ajaxUrl={`${env.VITE_ADMIN_API_URL}/colors`} columnTitles={columnTitles} columns={columns} options={['show', 'edit', 'delete']} endPoint="color" onDelete={true}/>
+                  <Datatable tableId="specification-datatable" ajaxUrl={`${env.VITE_ADMIN_API_URL}/specifications`} columnTitles={columnTitles} columns={columns} options={['show', 'edit', 'delete']} endPoint="specification" onDelete={true} />
                 }
               </div>
             </div >
@@ -78,9 +78,6 @@ const ListColor = () => {
       </div >
     </>
   );
-
-
-
 }
 
-export default ListColor
+export default ListSpecification

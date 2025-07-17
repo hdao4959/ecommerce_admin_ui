@@ -1,43 +1,48 @@
+import { Link, useLocation } from "react-router-dom"
+
 const LeftPanel = () => {
+
+  const location = useLocation();
+  const { pathname } = location
 
   return (
     <aside id="left-panel" className="left-panel">
       <nav className="navbar navbar-expand-sm navbar-default">
         <div id="main-menu" className="main-menu collapse navbar-collapse">
           <ul className="nav navbar-nav">
-            <li title="Dashboard" className="active">
-              <a href="/">
+            <li title="Dashboard" className={`${pathname === '/' ? 'active' : ''}`}>
+              <Link to="/">
                 <i className="menu-icon fa fa-laptop" />
-                Dashboard{" "}
-              </a>
+                Dashboard
+              </Link>
             </li>
 
-            <li title="Danh mục sản phẩm" className="menu-item-has-children dropdown">
+            <li title="Danh mục sản phẩm" className={`menu-item-has-children dropdown ${pathname === '/category' || pathname === '/category/add' ? "active" : ''}`}>
               <a
                 href="#"
                 className="dropdown-toggle"
                 data-toggle="dropdown"
                 aria-haspopup="true"
-                aria-expanded="false"
+                aria-expanded="false" 
               >
                 <i className="menu-icon fa fa-folder" />
                 Danh mục sản phẩm
               </a>
               <ul className="sub-menu children dropdown-menu">
 
-                <li>
+                <li className="active">
                   <i className="fa fa-table" />
-                  <a href="/category">Danh sách</a>
+                  <Link to="/category">Danh sách</Link>
                 </li>
 
                 <li>
                   <i className="fa fa-plus" />
-                  <a href="/category/add">Thêm mới</a>
+                  <Link to="/category/add">Thêm mới</Link>
                 </li>
               </ul>
             </li>
 
-            <li title="Dòng sản phẩm" className="menu-item-has-children dropdown">
+            <li title="Dòng sản phẩm" className={`menu-item-has-children dropdown ${pathname === '/product' || pathname === '/product/add' ? 'active' : ''}`}>
               <a
                 href="#"
                 className="dropdown-toggle"
@@ -52,16 +57,16 @@ const LeftPanel = () => {
 
                 <li>
                   <i className="fa fa-table" />
-                  <a href="/product">Danh sách</a>
+                  <Link to="/product">Danh sách</Link>
                 </li>
 
                 <li>
                   <i className="fa fa-plus" />
-                  <a href="/product/add">Thêm mới</a>
+                  <Link to="/product/add">Thêm mới</Link>
                 </li>
               </ul>
             </li>
-            <li title="Biến thể sản phẩm" className="menu-item-has-children dropdown">
+            <li title="Biến thể sản phẩm" className={`menu-item-has-children dropdown ${pathname === '/variant' || pathname === '/variant/add' ? 'active' : ''}`}>
               <a
                 href="#"
                 className="dropdown-toggle"
@@ -76,17 +81,17 @@ const LeftPanel = () => {
 
                 <li>
                   <i className="fa fa-table" />
-                  <a href="/variant">Danh sách</a>
+                  <Link to="/variant">Danh sách</Link>
                 </li>
 
                 <li>
                   <i className="fa fa-plus" />
-                  <a href="/variant/add">Thêm mới</a>
+                  <Link to="/variant/add">Thêm mới</Link>
                 </li>
               </ul>
             </li>
 
-            <li title="Màu sắc" className="menu-item-has-children dropdown">
+            <li title="Màu sắc" className={`menu-item-has-children dropdown ${pathname === '/color' || pathname === '/color/add' ? 'active' : ''}`}>
               <a
                 href="#"
                 className="dropdown-toggle"
@@ -101,17 +106,41 @@ const LeftPanel = () => {
 
                 <li>
                   <i className="fa fa-table" />
-                  <a href="/color">Danh sách</a>
+                  <Link to="/color">Danh sách</Link>
                 </li>
 
                 <li>
                   <i className="fa fa-plus" />
-                  <a href="/color/add">Thêm mới</a>
+                  <Link to="/color/add">Thêm mới</Link>
+                </li>
+              </ul>
+            </li>
+            <li title="Thông số sản phẩm" className={`menu-item-has-children dropdown ${pathname === '/specification' || pathname === '/specification/add' ? 'active' : ''}`}>
+              <a
+                href="#"
+                className="dropdown-toggle"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <i className="menu-icon fa fa-folder" />
+                Thông số sản phẩm
+              </a>
+              <ul className="sub-menu children dropdown-menu">
+
+                <li>
+                  <i className="fa fa-table" />
+                  <Link to="/specification">Danh sách</Link>
+                </li>
+
+                <li>
+                  <i className="fa fa-plus" />
+                  <Link to="/specification/add">Thêm mới</Link>
                 </li>
               </ul>
             </li>
 
-            <li title="Đơn hàng" className="menu-item-has-children dropdown">
+            <li title="Đơn hàng" className={`menu-item-has-children dropdown ${pathname === '/order' ? 'active' : ''}`}>
               <a
                 href="#"
                 className="dropdown-toggle"
@@ -126,13 +155,13 @@ const LeftPanel = () => {
 
                 <li>
                   <i className="fa fa-table" />
-                  <a href="/order">Danh sách</a>
+                  <Link to="/order">Danh sách</Link>
                 </li>
 
               </ul>
             </li>
 
-            <li title="Tài khoản người dùng" className="menu-item-has-children dropdown">
+            <li title="Tài khoản người dùng" className={`menu-item-has-children dropdown ${pathname === '/user' || pathname === '/user/add' ? 'active' : ''}`}>
               <a
                 href="#"
                 className="dropdown-toggle"
@@ -147,13 +176,12 @@ const LeftPanel = () => {
 
                 <li>
                   <i className="fa fa-table" />
-                  <a href="/user">Danh sách</a>
+                  <Link to="/user">Danh sách</Link>
                 </li>
                 <li>
                   <i className="fa fa-plus" />
-                  <a href="/user/add">Thêm mới</a>
+                  <Link to="/user/add">Thêm mới</Link>
                 </li>
-
               </ul>
             </li>
 

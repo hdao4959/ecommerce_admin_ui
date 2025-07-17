@@ -14,7 +14,7 @@ const useApi = (apiFunc, autoFetch = false, ...initialArgs) => {
       const response = await apiFunc(...args);
       setData(response?.data?.data)
       setResponse(response?.data)
-      if(response?.data?.message){
+      if(response?.data?.success && response?.data?.message){
         toast.success(response.data.message)
       }
     } catch (error) {
