@@ -1,5 +1,5 @@
 import ListVariant from "../pages/Variant"
-import AddVariant from "../pages/Variant/AddVariant"
+import AddVariant from "../pages/Variant/AddVariant/index.jsx"
 
 const variantRoutes = [
   {

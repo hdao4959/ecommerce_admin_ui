@@ -5,7 +5,7 @@ const create = (data) => {
 }
 
 const getAllActive = () => {
-  return axiosInstance.get('/specifications?active=1');
+  return axiosInstance.get('/specifications?active=1&limit=0');
 }
 
 export default {
