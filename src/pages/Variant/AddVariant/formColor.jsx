@@ -2,6 +2,8 @@ import React from 'react'
 
 const FormColor = ({colorActives, setColorActives}) => {
 
+  console.log(colorActives);
+  
 
   const handleChangeColor = (idColor, event) => {
     const { name, value, type, files } = event.target;
@@ -32,7 +34,7 @@ const FormColor = ({colorActives, setColorActives}) => {
   return (
     <div className='my-2'>
       <strong>Biến thể</strong>
-      <p className='text-danger'>Những màu sắc không có <strong><i>giá</i></strong> hoặc <strong><i>số lượng</i></strong> sẽ không được thêm</p>
+      <p className='text-danger'>Những màu sắc không có <strong><i>giá</i></strong> hoặc <strong><i>số lượng</i></strong> hoặc <strong><i>hình ảnh</i></strong> sẽ không được thêm</p>
       <div>
         <div style={{ maxHeight: "300px", overflowY: 'auto' }}>
           <table id='table_add_variant' className=' table table-bordered'  >

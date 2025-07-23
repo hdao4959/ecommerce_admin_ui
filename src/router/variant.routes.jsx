@@ -1,5 +1,6 @@
 import ListVariant from "../pages/Variant"
 import AddVariant from "../pages/Variant/AddVariant/index.jsx"
+import EditVariant from "../pages/Variant/EditVariant/index.jsx"
 
 const variantRoutes = [
   {
@@ -7,6 +8,8 @@ const variantRoutes = [
   },
   {
     path: 'variant', element: <ListVariant/>
+  }, {
+    path: 'variant/:id/edit', element: <EditVariant/>
   }
 ]
 

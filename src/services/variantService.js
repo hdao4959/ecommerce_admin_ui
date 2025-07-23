@@ -8,6 +8,14 @@ const create = (data) => {
   })
 }
 
+const getDetailById = (id) => {
+  return axiosInstance.get('/variants/' + id);
+}
+
+const update = (id, data) => {
+  return axiosInstance.put('/variants/' + id, data)
+}
+
 export default {
-  create
+  create, getDetailById, update
 }

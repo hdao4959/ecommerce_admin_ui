@@ -28,10 +28,10 @@ const FormVariant = ({ formVariant, setFormVariant }) => {
           </label>
         </div>
         <div className="col-12 col-md-9">
-          <select name="product_id" id="select" className="form-control" onChange={(event) => handleChangeVariant(event)} >
+          <select name="product_id" value={formVariant?.product_id || "" } id="select" className="form-control" onChange={(event) => handleChangeVariant(event)} >
             <option value="">--Dòng sản phẩm--</option>
-            {productLineActives?.map((productLine, index) => (
-              <option key={index} value={productLine._id}>{productLine.name}</option>
+            {productLineActives && productLineActives?.map((productLine, index) => (
+              <option key={index} value={productLine?._id}>{productLine.name}</option>
             ))}
           </select>
         </div>
@@ -84,7 +84,6 @@ const FormVariant = ({ formVariant, setFormVariant }) => {
         value={formVariant?.description} onChange={(data) => setFormVariant(prev => ({
           ...prev, description: data
         }))} />
-
     </>
   )
 }

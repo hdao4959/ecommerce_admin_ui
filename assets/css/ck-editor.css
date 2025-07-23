@@ -1,3 +1,10 @@
+/* .ck.ck-toolbar {
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+  background: rgb(205, 203, 203);
+} */
+
 .ck-editor__editable_inline {
   min-height: 200px;
 }
