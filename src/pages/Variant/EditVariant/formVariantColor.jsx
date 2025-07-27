@@ -1,34 +1,31 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import env from '../../../config/env';
-import useApi from '../../../hooks/useApi';
-import colorService from '../../../services/colorService';
 
-const FormVariantColor = ({ variantColor, setVariantColor }) => {
-  const { data: resColorAllActive } = useApi(colorService.getAllActive, true);
+const FormVariantColor = ({ resColorAllActive, variantColor, setVariantColor }) => {
   const [newColorId, setNewColorId] = useState("")
-
+  
   const handleChangeVariantColor = (idColor, event) => {
-    const { name, value, type, files } = event.target;
-    
+    const { name, value, type, files, checked } = event.target;
+
     setVariantColor(prev =>
-      prev.map(color => {
-        if (color._id == idColor) {
-          let newImg = color.img
+      prev.map(variantColor => {
+        if (variantColor.color_id == idColor) {
+          let newImg = variantColor?.img || ""
           if (type == 'file' && files[0]) {
             const oldImg = newImg;
             // Tạo ảnh blob mới
             newImg = URL.createObjectURL(files[0])
             // Xoá ảnh blob cũ
-            if (newImg.startsWith('blob:')) URL.revokeObjectURL(oldImg)
+            if (oldImg?.startsWith('blob:')) URL.revokeObjectURL(oldImg)
           }
           return {
-            ...color,
-            [name]: type == 'file' ? files[0] : value,
+            ...variantColor,
+            [name]: type == 'file' ? files[0] : type == "checkbox" ? checked : value,
             // Tạo hình ảnh blob
             img: newImg
           }
         } else {
-          return color
+          return variantColor
         }
       }
       ))
@@ -43,20 +40,18 @@ const FormVariantColor = ({ variantColor, setVariantColor }) => {
         color_name: color?.name,
         price: 0,
         stock: 0,
-        img: ''
+        img: '',
+        is_active: false
       }
     ]))
-
     setNewColorId("");
-
-
   }
 
   const handleRemoveVariantColor = (idColor) => {
     const confirmed = confirm('Bạn có chắc muốn xoá không?');
-    if(confirmed){
+    if (confirmed) {
       variantColor?.forEach(varColor => {
-        if(varColor?.color_id === idColor && varColor?.img?.startsWith('blob:')) {
+        if (varColor?.color_id === idColor && varColor?.img?.startsWith('blob:')) {
           URL.revokeObjectURL(varColor.img)
         }
       })
@@ -77,6 +72,7 @@ const FormVariantColor = ({ variantColor, setVariantColor }) => {
                 <th className='align-content-center'>Màu sắc</th>
                 <th className='align-content-center'>Giá</th>
                 <th className='align-content-center'>Số lượng</th>
+                <th className='align-content-center'>Active</th>
                 <th className='align-content-center'>Hình ảnh</th>
                 <th>Preview</th>
                 <th>Hành động</th>
@@ -87,13 +83,14 @@ const FormVariantColor = ({ variantColor, setVariantColor }) => {
                 <tr key={index} className='text-center' >
                   <th className='align-content-center'>{index + 1}</th>
                   <th className='align-content-center'>{varColor.color_name}</th>
-                  <td className='align-content-center'><input name='price' type="number" className='form-control' min={0} defaultValue={varColor.price} onChange={(event) => handleChangeVariantColor(varColor?._id, event)} /></td>
-                  <td className='align-content-center'><input name='stock' type="number" className='form-control' min={0} defaultValue={varColor.stock} onChange={(event) => handleChangeVariantColor(varColor?._id, event)} /></td>
+                  <td className='align-content-center'><input name='price' type="number" className='form-control' min={0} defaultValue={varColor.price} onChange={(event) => handleChangeVariantColor(varColor?.color_id, event)} /></td>
+                  <td className='align-content-center'><input name='stock' type="number" className='form-control' min={0} defaultValue={varColor.stock} onChange={(event) => handleChangeVariantColor(varColor?.color_id, event)} /></td>
+                  <td className='align-content-center'><input name='is_active' type="checkbox" checked={varColor.is_active} onChange={(event) => handleChangeVariantColor(varColor?.color_id, event)} /></td>
                   <td className='align-content-center'>
                     <label htmlFor={`file-upload-${varColor.color_id}`} className="btn btn-primary btn-sm">
                       Chọn ảnh
                     </label>
-                    <input id={`file-upload-${varColor.color_id}`} name='image' type="file" className='d-none' onChange={(event) => handleChangeVariantColor(varColor?._id, event)} /></td>
+                    <input id={`file-upload-${varColor.color_id}`} name='image' type="file" className='d-none' onChange={(event) => handleChangeVariantColor(varColor?.color_id, event)} /></td>
                   <td className='align-content-center'><img style={{ width: '50px', height: '50px', objectFit: 'cover' }} src={`${varColor?.img?.includes('blob') ? varColor.img : env.VITE_SERVER_BASE_URL + '/' + varColor.img}`} alt="Chưa có ảnh" /></td>
                   <td className='align-content-center'><button type='button' className='btn btn-sm btn-danger' onClick={() => handleRemoveVariantColor(varColor?.color_id)}>🗑 Xoá</button></td>
                 </tr>

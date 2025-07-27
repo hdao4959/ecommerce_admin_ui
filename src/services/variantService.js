@@ -13,7 +13,11 @@ const getDetailById = (id) => {
 }
 
 const update = (id, data) => {
-  return axiosInstance.put('/variants/' + id, data)
+  return axiosInstance.put('/variants/' + id, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 
 export default {

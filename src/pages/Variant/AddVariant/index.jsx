@@ -30,10 +30,9 @@ const AddVariant = () => {
       delete cloneColor.name
       return cloneColor
     })
-    
+
     const formSpec = specs.filter(spec => spec.value).map(spec => {
-      const cloneSpec = {...spec}
-      delete cloneSpec.name 
+      const { name, ...cloneSpec } = spec
       return cloneSpec
     })
 
@@ -45,16 +44,21 @@ const AddVariant = () => {
       formData.append('images', color.image)
     });
 
-
-
-
     fetchAddVariant(formData)
   }
 
 
   useEffect(() => {
     if (resColorAllActive) {
-      setColorActives(resColorAllActive.items.map(color => ({ ...color, price: 0, stock: 0, image: color?.image || null, img: null })))
+      setColorActives(resColorAllActive.items.map(color => {
+        const cloneColor = {
+          color_id: color?._id,
+          name: color?.name
+        }
+        return {
+          ...cloneColor, price: 0, stock: 0, image: color?.image || null, img: null
+        }
+      }))
     }
   }, [resColorAllActive])
 
@@ -79,7 +83,7 @@ const AddVariant = () => {
             <FormVariant formVariant={formVariant} setFormVariant={setFormVariant} />
             <FormSpecification specs={specs} setSpecs={setSpecs} />
             <FormColor colorActives={colorActives} setColorActives={setColorActives} />
-           
+
 
           </form>
         </div>

@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-import useApi from '../../../hooks/useApi';
-import specificationService from '../../../services/specificationService';
 
-const FormSpecification = ({ specs, setSpecs }) => {
-  const { data: resSpecAllActive } = useApi(specificationService.getAllActive, true);
+const FormSpecification = ({resSpecAllActive,  specs, setSpecs }) => {
 
   const [newSelectId, setNewSelectId] = useState(null)
 
@@ -39,74 +36,78 @@ const FormSpecification = ({ specs, setSpecs }) => {
           value: value
         } : spec))
   }
+
+  // useEffect(() => {
+  //   if (resSpecAllActive && resSpecAllActive?.items) {
+  //     setSpecs(resSpecAllActive.items)
+  //   }
+  // }, [resSpecAllActive])
   return (
-    <div className="my-3">
+    <div className='my-3'>
       <strong>Thông số kỹ thuật</strong>
-      <table className="table table-bordered align-middle">
-        <thead className="table-light">
-          <tr className='text-center'>
-            <th>#</th>
-            <th>Thông số</th>
-            <th>Giá trị</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {specs?.length > 0 && specs?.map((spec, index) => (
-            <tr key={index} className='text-center'>
-              <th className='align-content-center'>{index + 1}</th>
-              <th className='align-content-center'>{spec.name}</th>
-              <td className='align-content-center'>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={spec.value}
-                  onChange={(e) => handleChangeSpec(index, e.target.value)}
-                />
+      <div className="my-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <table className="table table-striped align-middle" >
+          <thead className="table-light" style={{ position: 'sticky', top: 0 }}>
+            <tr className='text-center'>
+              <th>#</th>
+              <th>Thông số</th>
+              <th>Giá trị</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {specs?.length > 0 && specs?.map((spec, index) => (
+              <tr key={index} className='text-center'>
+                <th className='align-content-center'>{index + 1}</th>
+                <th className='align-content-center'>{spec.name}</th>
+                <td className='align-content-center'>
+                  <textarea name="" className='form-control' id="" value={spec.value || ""} onChange={(e) => handleChangeSpec(index, e.target.value)}></textarea>
+                </td>
+                <td className='align-content-center'>
+                  <button
+                    type='button'
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleRemoveSpec(index)}
+                  >
+                    🗑 Xoá
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className='text-center'>
+              <td colSpan="3" className='align-content-center'>
+                <div>
+                  <select
+                    className="form-control"
+                    value={newSelectId || ""}
+                    onChange={(e) => setNewSelectId(e.target.value)}
+                  >
+                    <option value="">-- Chọn thông số --</option>
+                    {resSpecAllActive?.items?.map((spec) => (
+                      <option key={spec._id} value={spec._id}>
+                        {spec.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </td>
               <td className='align-content-center'>
                 <button
                   type='button'
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleRemoveSpec(index)}
+                  className="btn btn-success btn-sm"
+                  onClick={(e) => handleAddSpec(e, newSelectId)}
+                  disabled={specs?.map(spec => spec?._id).includes(newSelectId)}
                 >
-                  🗑 Xoá
+                  ✙ Thêm
                 </button>
               </td>
             </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr className='text-center'>
-            <td colSpan="3" className='align-content-center'>
-              <div>
-                <select
-                  className="form-control"
-                  value={newSelectId || ""}
-                  onChange={(e) => setNewSelectId(e.target.value)}
-                >
-                  <option value="">-- Chọn thông số --</option>
-                  {resSpecAllActive?.items?.map((spec) => (
-                    <option key={spec._id} value={spec._id}>
-                      {spec.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </td>
-            <td className='align-content-center'>
-              <button
-                type='button'
-                className="btn btn-success btn-sm"
-                onClick={(e) => handleAddSpec(e, newSelectId)}
-                disabled={specs.map( spec => spec._id).includes(newSelectId)}
-              >
-                ✙ Thêm
-              </button>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+          </tfoot>
+        </table>
+      </div>
+      <hr />
     </div>
   )
 }

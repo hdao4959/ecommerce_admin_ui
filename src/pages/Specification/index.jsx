@@ -3,6 +3,7 @@ import ScriptLoader from '../../common/ScriptLoader'
 import axiosInstance from '../../utils/axios'
 import Datatable from '../../components/Datatable';
 import env from '../../config/env';
+import { Link } from 'react-router-dom';
 
 const ListSpecification = () => {
 
@@ -64,7 +65,7 @@ const ListSpecification = () => {
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
                 <strong className="card-title">Danh sách <span className='text-info'>Màu sắc</span></strong>
-                <a href='/color/add' className='btn btn-success'> Thêm mới</a>
+                <Link to="/specification/add" className='btn btn-success'>Thêm mới</Link>
               </div>
               <div className="card-body">
                 {

@@ -57,12 +57,14 @@ const FormSpecification = ({ specs, setSpecs }) => {
               <td className='align-content-center'>{index + 1}</td>
               <td className='align-content-center'>{spec.name}</td>
               <td className='align-content-center'>
-                <input
+                {/* <input
                   type="text"
                   className="form-control"
                   value={spec.value}
                   onChange={(e) => handleChangeSpec(index, e.target.value)}
-                />
+                /> */}
+                  <textarea name="" className='form-control' id="" value={spec.value || ""} onChange={(e) => handleChangeSpec(index, e.target.value)}></textarea>
+
               </td>
               <td className='align-content-center'>
                 <button

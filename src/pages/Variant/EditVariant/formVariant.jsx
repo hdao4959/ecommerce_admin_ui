@@ -3,9 +3,7 @@ import useApi from '../../../hooks/useApi';
 import productService from '../../../services/productService';
 import Ckeditor from '../../../components/Ckeditor'
 
-const FormVariant = ({ formVariant, setFormVariant }) => {
-  const { data: resProductAllActive } = useApi(productService.getAllActive, true);
-  const [productLineActives, setProductLineActives] = useState([]);
+const FormVariant = ({resProductAllActive, formVariant, setFormVariant }) => {
 
   const handleChangeVariant = (event) => {
     const { name, value, type, checked } = event.target
@@ -13,12 +11,6 @@ const FormVariant = ({ formVariant, setFormVariant }) => {
       ...prev, [name]: type == 'checkbox' ? checked : value
     }))
   }
-
-  useEffect(() => {
-    if (resProductAllActive) {
-      setProductLineActives(resProductAllActive.items);
-    }
-  }, [resProductAllActive])
   return (
     <>
       <div className="row form-group">
@@ -30,7 +22,7 @@ const FormVariant = ({ formVariant, setFormVariant }) => {
         <div className="col-12 col-md-9">
           <select name="product_id" value={formVariant?.product_id || "" } id="select" className="form-control" onChange={(event) => handleChangeVariant(event)} >
             <option value="">--Dòng sản phẩm--</option>
-            {productLineActives && productLineActives?.map((productLine, index) => (
+            {resProductAllActive?.items?.map((productLine, index) => (
               <option key={index} value={productLine?._id}>{productLine.name}</option>
             ))}
           </select>
@@ -81,9 +73,10 @@ const FormVariant = ({ formVariant, setFormVariant }) => {
         </div>
       </div>
       <Ckeditor
-        value={formVariant?.description} onChange={(data) => setFormVariant(prev => ({
+        value={formVariant?.description || ""} onChange={(data) => setFormVariant(prev => ({
           ...prev, description: data
         }))} />
+        <hr />
     </>
   )
 }

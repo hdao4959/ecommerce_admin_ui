@@ -175,7 +175,7 @@ const DetailProduct = () => {
                     <td className='align-content-center'><strong className='text-danger'>{formatPrice(variant?.variantColor?.price)}</strong></td>
                     <td className='align-content-center'>{variant?.variantColor?.stock}</td>
                     <td className='align-content-center'><img className='img-fluid' width={50} src={`${env.VITE_SERVER_BASE_URL}/${variant?.variantColor?.img}`} alt="" /></td>
-                    <td className='align-content-center'>{variant?.variantColor?.is_active ? <strong className='text-primary'>Active</strong> : <strong className='text-danger'>Not Active</strong>}</td>
+                    <td className='align-content-center'>{variant?.variantColor?.is_active == false ? <strong className='text-danger'>Not Active</strong> : <strong className='text-primary'>Active</strong>}</td>
                   </tr>
                 )) :
                   <tr className='text-center'>
