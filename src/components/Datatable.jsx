@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { toast } from "react-toastify";
+import axiosInstance from "../utils/axios";
 
 const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete = false, options = [], endPoint = null }) => {
   let dataTableColumns = [];
@@ -47,7 +48,7 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
         ajax: function (data, callback) {
           const keyword = data.search.value;
           const order = data?.order[0]
-          const direction = order?.dir 
+          const direction = order?.dir
           const column = order?.column
           const nameColumn = data?.columns[column]?.data;
           const limit = data?.length;
@@ -68,9 +69,9 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
 
           const query = params.length > 0 ? `?${params.join('&')}` : ""
 
-          fetch(ajaxUrl + query)
-            .then(res => res.json())
-            .then(response => {
+          axiosInstance.get(ajaxUrl + query)
+            .then(res => {
+              const response = res.data
               callback({
                 draw: data?.draw,
                 recordsTotal: response?.data?.meta?.total,
@@ -78,6 +79,15 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
                 data: response?.data?.items
               })
             })
+            .catch(() => {
+              callback({
+                draw: data?.draw,
+                recordsTotal: 0,
+                recordsFiltered: 0,
+                data: []
+              });
+            })
+
         },
         columns: dataTableColumns
       }
@@ -88,15 +98,13 @@ const Datatable = ({ tableId, columnTitles, columns, ajaxUrl, showMore, onDelete
           const id = $btn.data('id')
           const confirmed = confirm('Bạn có chắc chắn muốn xoá không?');
           if (confirmed) {
-            fetch(`${ajaxUrl}/${id}`, {
-              method: "DELETE"
-            }).then(res => res.json())
+            axiosInstance.delete(`${ajaxUrl}/${id}`)
               .then(res => {
-                if (res.success == true) {
+                if (res.data.success) {
                   $table.DataTable().ajax.reload(null, false)
-                  toast.success(res?.message)
+                  toast.success(res.data?.message)
                 } else {
-                  toast.error(res?.message)
+                  toast.error(res.data?.message)
                 }
               });
           }

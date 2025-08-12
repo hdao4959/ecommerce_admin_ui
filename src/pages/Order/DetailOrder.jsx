@@ -13,7 +13,7 @@ const DetailOrder = () => {
   }
   useEffect(() => {
     fetchOrder()
-  }, [])
+  }, [id])
 
   return (
     <>

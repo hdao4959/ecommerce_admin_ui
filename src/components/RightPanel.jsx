@@ -5,19 +5,11 @@ import { Outlet } from 'react-router-dom'
 const RightPanel = () => {
   return (
     <div id="right-panel" className="right-panel">
-    {/* Header*/}
     <Header/>
-    {/* /#header */}
-    {/* Content */}
- 
     <div className="content">
-      
-      {/* Animated */}
       <Outlet/>
     </div>
-    {/* /.content */}
     <div className="clearfix" />
-    {/* Footer */}
     <footer className="site-footer">
       <div className="footer-inner bg-white">
         <div className="row">
@@ -28,7 +20,6 @@ const RightPanel = () => {
         </div>
       </div>
     </footer>
-    {/* /.site-footer */}
   </div>
   )
 }
